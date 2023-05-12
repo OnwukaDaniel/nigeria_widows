@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/settings.dart';
 import 'package:nigerian_widows/util/app_color.dart';
+import 'package:nigerian_widows/util/app_constants.dart';
 
 import '../reuseables/resuable_text.dart';
 import '../sharednotifiers/app.dart';
@@ -43,12 +44,21 @@ class _LandingState extends State<Landing> {
             key: _scaffoldKey,
             appBar: AppBar(
               backgroundColor: Theme.of(context).backgroundColor,
+              elevation: 0,
               leading: InkWell(
                 onTap: () {
                   _scaffoldKey.currentState!.openDrawer();
                 },
                 child: Icon(
                   Icons.menu,
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+              title: Text(
+                AppConstants.appName,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                   color: Theme.of(context).textTheme.bodyText1!.color,
                 ),
               ),
@@ -76,7 +86,7 @@ class _LandingState extends State<Landing> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      "Nigeria Widows",
+                      AppConstants.appName,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -221,7 +231,7 @@ class DrawerItem extends StatelessWidget {
                 text: text,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Theme.of(context).textTheme.bodyText1!.color,
+                  color: color == Colors.transparent ? Colors.black : Colors.white,
                 ),
               ),
             ],

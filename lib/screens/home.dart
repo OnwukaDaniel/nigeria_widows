@@ -257,13 +257,13 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     readJson();
     lineChartDataVn.value = lineChartBarData;
     setAgeAtBereavementTile();
     setOccupationTile();
     setLgaTile();
     setWidowsTile();
+    super.initState();
   }
 
   @override
@@ -292,7 +292,7 @@ class _HomeState extends State<Home> {
 
     lineChartBarData.add(
       LineChartBarData(
-        show: show_me,
+        show: true,
         spots: widowYearsChartList,
         showingIndicators: showIndexes,
         color: const Color(0xff5f29f8),

@@ -24,7 +24,7 @@ class AppTheme {
     fontFamily: 'Rubik',
     backgroundColor: Colors.black87,
     cardColor: const Color(0xff444343),
-    cardTheme: const CardTheme(color: Color(0xff444343)),
+    cardTheme: const CardTheme(color: Color(0xff2f2f2f)),
     primaryColor: const Color.fromARGB(255, 255, 255, 255),
     textTheme: const TextTheme(bodyText1: TextStyle(color: Colors.white)),
   );
