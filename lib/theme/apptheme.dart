@@ -9,7 +9,7 @@ class AppTheme{
     dividerColor: Colors.grey,
     backgroundColor: const Color(0xfff8fcfa),
     cardColor: Colors.white,
-    cardTheme: const CardTheme(color: Colors.white60),
+    cardTheme: const CardTheme(color: Colors.blueAccent),
     primaryColor: const Color.fromARGB(255, 255, 255, 255),
     textTheme: const TextTheme(bodyText1: TextStyle(color: Colors.black)),
   );

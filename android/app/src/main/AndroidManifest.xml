@@ -2,7 +2,7 @@
     package="com.example.mobile_dev_com_dashboard">
    <application
         android:label="Nigerian Widows"
-        android:name="Nigerian Widows"
+        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

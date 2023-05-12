@@ -17,6 +17,7 @@ import '../reuseables/value_notifiers.dart';
 
 class Home extends StatefulWidget {
   static const String id = "home";
+
   const Home({Key? key}) : super(key: key);
 
   @override
@@ -24,6 +25,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<DataModel> data = [];
   List<int> showIndexes = [];
   bool show_me = false;
@@ -203,7 +205,11 @@ class _HomeState extends State<Home> {
         PieIndicators(
             textWidget: Text(
               x,
-              style: const TextStyle(fontSize: 12, overflow: TextOverflow.clip),
+              style: TextStyle(
+                fontSize: 12,
+                overflow: TextOverflow.clip,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
             color: ngoColor[countNgo]),
       );
@@ -216,7 +222,11 @@ class _HomeState extends State<Home> {
         PieIndicators(
             textWidget: Text(
               x,
-              style: const TextStyle(fontSize: 12, overflow: TextOverflow.clip),
+              style: TextStyle(
+                fontSize: 12,
+                overflow: TextOverflow.clip,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
             color: empColor[countEmp]),
       );
@@ -302,13 +312,23 @@ class _HomeState extends State<Home> {
           showTitles: true,
           reservedSize: 65,
           getTitlesWidget: ((value, meta) {
-            const style = TextStyle(color: Colors.black, fontSize: 8);
+            var style = TextStyle(
+                color: Theme.of(context).textTheme.bodyText1!.color,
+                fontSize: 8);
             return SideTitleWidget(
               space: 4,
               axisSide: meta.axisSide,
               child: Column(
                 children: [
-                  const RotatedBox(quarterTurns: 1, child: Text(" - ")),
+                  RotatedBox(
+                    quarterTurns: 1,
+                    child: Text(
+                      " - ",
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                  ),
                   Text(spouseBerLegend[value.toInt()], style: style),
                 ],
               ),
@@ -342,7 +362,9 @@ class _HomeState extends State<Home> {
           showTitles: true,
           reservedSize: 95,
           getTitlesWidget: ((v, meta) {
-            const style = TextStyle(color: Colors.black, fontSize: 8);
+            var style = TextStyle(
+                color: Theme.of(context).textTheme.bodyText1!.color,
+                fontSize: 8);
             return SideTitleWidget(
               space: 4,
               axisSide: meta.axisSide,
@@ -387,8 +409,8 @@ class _HomeState extends State<Home> {
           showTitles: true,
           reservedSize: 90,
           getTitlesWidget: (double value, TitleMeta meta) {
-            const style = TextStyle(
-              color: Colors.black,
+            var style = TextStyle(
+              color: Theme.of(context).textTheme.bodyText1!.color,
               fontSize: 10,
             );
             return SideTitleWidget(
@@ -406,7 +428,9 @@ class _HomeState extends State<Home> {
           reservedSize: 40,
           interval: 200,
           getTitlesWidget: (double value, TitleMeta meta) {
-            const style = TextStyle(color: Color(0xff939393), fontSize: 10);
+            var style = TextStyle(
+                color: Theme.of(context).textTheme.bodyText1!.color,
+                fontSize: 10);
             return SideTitleWidget(
               angle: 98.96,
               space: 15,
@@ -439,32 +463,48 @@ class _HomeState extends State<Home> {
       ),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            interval: 1,
-            getTitlesWidget: (double value, TitleMeta meta) {
-              const style = TextStyle(
-                color: Color(0xff68737d),
-                fontSize: 10,
-              );
-              var r = [for (var i = 0; i <= widowYearsChartList.length; i++) i];
+          showTitles: true,
+          reservedSize: 30,
+          interval: 1,
+          getTitlesWidget: (double value, TitleMeta meta) {
+            var style = TextStyle(
+              color: Theme.of(context).textTheme.bodyText1!.color,
+              fontSize: 10,
+            );
+            var r = [for (var i = 0; i <= widowYearsChartList.length; i++) i];
 
-              if (r.contains((value - 1).toInt())) {
-                return SideTitleWidget(
-                  space: 4,
-                  axisSide: meta.axisSide,
-                  child: Column(
-                    children: [
-                      const RotatedBox(quarterTurns: 1, child: Text("- ")),
-                      Text(widowYearsLegend[(value).toInt() - 2], style: style),
-                    ],
+            if (r.contains((value - 1).toInt())) {
+              return SideTitleWidget(
+                space: 4,
+                axisSide: meta.axisSide,
+                child: Column(
+                  children: [
+                    RotatedBox(
+                      quarterTurns: 1,
+                      child: Text(
+                        "- ",
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                      ),
+                    ),
+                    Text(widowYearsLegend[(value).toInt() - 2], style: style),
+                  ],
+                ),
+              );
+            } else {
+              return SideTitleWidget(
+                axisSide: meta.axisSide,
+                child: Text(
+                  "",
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color,
                   ),
-                );
-              } else {
-                return SideTitleWidget(
-                    axisSide: meta.axisSide, child: const Text(""));
-              }
-            }),
+                ),
+              );
+            }
+          },
+        ),
       ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(showTitles: false),
@@ -474,329 +514,412 @@ class _HomeState extends State<Home> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Rubik'),
-      home: ListView(
-        padding: const EdgeInsets.all(12.0),
-        children: [
-          ValueListenableBuilder(
-            builder: (context, int value, child) {
-              if(value == 0) return const SizedBox();
-              return AssetChat(
-                legendText: const CustomText(
-                  text: "TOTAL NUMBER OF WIDOWS REGISTERED",
-                ),
-                countText: CustomText(
-                  text: "$value",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 30,
-                  ),
-                  padding: EdgeInsets.only(bottom: ch / 4),
-                ),
-                iconPath: "assets/icons/people_icons.png",
-                wavePath: "assets/icons/wave_graph1.png",
-              );
+      home: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).backgroundColor,
+          leading: InkWell(
+            onTap: () {
+              _scaffoldKey.currentState!.openDrawer();
             },
-            valueListenable: widowsCountVn,
+            child: Icon(
+              Icons.menu,
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
           ),
-          ValueListenableBuilder(
-            builder: (context, int value, child) {
-              if(value == 0) return const SizedBox();
-              return AssetChat(
-                legendText: const CustomText(
-                  text: "SELECT LOCAL GOVERNMENT",
-                ),
-                countText: CustomText(
-                  text: "$value",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 30,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(12.0),
+          children: [
+            ValueListenableBuilder(
+              builder: (context, int value, child) {
+                if (value == 0) return const SizedBox();
+                return AssetChat(
+                  legendText: CustomText(
+                    text: "TOTAL NUMBER OF WIDOWS REGISTERED",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1!.color,
+                    ),
                   ),
-                  padding: EdgeInsets.only(bottom: ch / 4),
+                  countText: CustomText(
+                    text: "$value",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
+                    ),
+                    padding: EdgeInsets.only(bottom: ch / 4),
+                  ),
+                  iconPath: "assets/icons/people_icons.png",
+                  wavePath: "assets/icons/wave_graph1.png",
+                );
+              },
+              valueListenable: widowsCountVn,
+            ),
+            ValueListenableBuilder(
+              builder: (context, int value, child) {
+                if (value == 0) return const SizedBox();
+                return AssetChat(
+                  legendText: const CustomText(
+                    text: "SELECT LOCAL GOVERNMENT",
+                  ),
+                  countText: CustomText(
+                    text: "$value",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 30,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
+                    ),
+                    padding: EdgeInsets.only(bottom: ch / 4),
+                  ),
+                  iconPath: "assets/icons/healthy_community.png",
+                  wavePath: "assets/icons/wave_graph.png",
+                );
+              },
+              valueListenable: lgaCountVn,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Material(
+                elevation: 10,
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
+                      padding:
+                          const EdgeInsets.only(top: 34, right: 12, left: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                    SizedBox(
+                      width: width.toDouble(),
+                      height: 350,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 16,
+                        ),
+                        child: RotatedBox(
+                          quarterTurns: 1,
+                          child: ValueListenableBuilder(
+                            builder: (context, List<BarChartGroupData> value,
+                                child) {
+                              if (value.isEmpty) return const SizedBox();
+                              return BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.center,
+                                  groupsSpace: 8,
+                                  barGroups: value,
+                                  titlesData: lgaTile,
+                                  gridData: gridData,
+                                  borderData: borderData,
+                                  barTouchData: BarTouchData(
+                                    touchTooltipData: BarTouchTooltipData(
+                                        fitInsideHorizontally: true,
+                                        fitInsideVertically: true,
+                                        tooltipBgColor: Colors.white,
+                                        getTooltipItem:
+                                            (groupData, int1, rodData, int2) {
+                                          return BarTooltipItem(
+                                              rodData.rodStackItems.first.toY
+                                                  .toString(),
+                                              TextStyle(
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1!
+                                                    .color,
+                                              ));
+                                        }),
+                                    handleBuiltInTouches: true,
+                                    allowTouchBarBackDraw: true,
+                                    touchCallback:
+                                        (FlTouchEvent event, barTouchResponse) {
+                                      if (!event.isInterestedForInteractions ||
+                                          barTouchResponse == null ||
+                                          barTouchResponse.spot == null) {
+                                        setState(() {
+                                          touchedIndex = -1;
+                                        });
+                                        return;
+                                      }
+                                      setState(() {
+                                        touchedIndex = barTouchResponse
+                                            .spot!.touchedBarGroupIndex;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            valueListenable: lgaGroupDataVn,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                iconPath: "assets/icons/healthy_community.png",
-                wavePath: "assets/icons/wave_graph.png",
-              );
-            },
-            valueListenable: lgaCountVn,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Material(
+              ),
+            ),
+            ValueListenableBuilder(
+              builder: (context, Map<String, int> value, child) {
+                if (value.isEmpty) return const SizedBox();
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: CustomPieGraph(
+                    sectionColor: empColor,
+                    chartList: empChartList,
+                    smallRadius: (w / 12),
+                    largeRadius: ((w / 12)) + 20.0,
+                    map: value,
+                    centerSpaceRadius: 60,
+                    indicatorList: empInd,
+                    employmentStaDataList: empChartList,
+                    centerText: CustomText(
+                      text: "WIDOWS\nEMPLOYMENT\n STATUS",
+                      padding: const EdgeInsets.only(right: 16, left: 16),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              valueListenable: employmentMapVn,
+            ),
+            ValueListenableBuilder(
+              builder: (context, Map<String, int> value, child) {
+                if (value.isEmpty) return const SizedBox();
+                return CustomPieGraph(
+                  sectionColor: ngoColor,
+                  chartList: ngoChartList,
+                  smallRadius: w / 8 + 20,
+                  largeRadius: (w / 8) + 50,
+                  map: value,
+                  indicatorList: nogInd,
+                  legendText: CustomText(
+                    text: "WIDOWS AFFILIATION TO NGO",
+                    padding:
+                        const EdgeInsets.only(top: 34, right: 16, left: 16),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1!.color,
+                    ),
+                  ),
+                  employmentStaDataList: ngoChartList,
+                );
+              },
+              valueListenable: ngoMapVn,
+            ),
+            Material(
               elevation: 10,
               borderRadius: BorderRadius.circular(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomText(
-                    text: "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
-                    padding: EdgeInsets.only(top: 34, right: 12, left: 12),
-                  ),
-                  SizedBox(
-                    width: width.toDouble(),
-                    height: 350,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 16,
+              color: Theme.of(context).cardColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: "YEARS SPENT AS A WIDOW",
+                      padding:
+                          const EdgeInsets.only(right: 16, left: 16, top: 20),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
-                      child: RotatedBox(
-                        quarterTurns: 1,
+                    ),
+                    SizedBox(
+                      width: cw,
+                      height: ch,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
                         child: ValueListenableBuilder(
                           builder:
-                              (context, List<BarChartGroupData> value, child) {
-                                if(value.isEmpty) return const SizedBox();
-                            return BarChart(
-                              BarChartData(
-                                alignment: BarChartAlignment.center,
-                                groupsSpace: 8,
-                                barGroups: value,
-                                titlesData: lgaTile,
-                                gridData: gridData,
-                                borderData: borderData,
-                                barTouchData: BarTouchData(
-                                  touchTooltipData: BarTouchTooltipData(
-                                      fitInsideHorizontally: true,
-                                      fitInsideVertically: true,
-                                      tooltipBgColor: Colors.white,
-                                      getTooltipItem:
-                                          (groupData, int1, rodData, int2) {
-                                        return BarTooltipItem(
-                                            rodData.rodStackItems.first.toY
-                                                .toString(),
-                                            const TextStyle());
-                                      }),
-                                  handleBuiltInTouches: true,
-                                  allowTouchBarBackDraw: true,
-                                  touchCallback:
-                                      (FlTouchEvent event, barTouchResponse) {
-                                    if (!event.isInterestedForInteractions ||
-                                        barTouchResponse == null ||
-                                        barTouchResponse.spot == null) {
-                                      setState(() {
-                                        touchedIndex = -1;
-                                      });
-                                      return;
-                                    }
-                                    setState(() {
-                                      touchedIndex = barTouchResponse
-                                          .spot!.touchedBarGroupIndex;
-                                    });
+                              (context, List<LineChartBarData> value, child) {
+                            if (value.isEmpty) return const SizedBox();
+                            return LineChart(
+                              LineChartData(
+                                showingTooltipIndicators:
+                                    showIndexes.map((index) {
+                                  return ShowingTooltipIndicators([
+                                    LineBarSpot(
+                                      tooltipsOnBar,
+                                      lineChartBarData.indexOf(tooltipsOnBar),
+                                      tooltipsOnBar.spots[index],
+                                    ),
+                                  ]);
+                                }).toList(),
+                                gridData: FlGridData(show: false),
+                                lineTouchData: LineTouchData(
+                                  getTouchLineEnd: (data, index) => 0,
+                                  getTouchedSpotIndicator:
+                                      (barData, List<int> spotIndexes) {
+                                    return spotIndexes
+                                        .map((spotIndex) {})
+                                        .toList();
                                   },
+                                  enabled: true,
+                                  touchTooltipData: LineTouchTooltipData(
+                                    tooltipBgColor: const Color(0xff602bf8),
+                                    tooltipRoundedRadius: 5,
+                                    tooltipPadding: const EdgeInsets.all(4),
+                                    getTooltipItems:
+                                        (List<LineBarSpot> lineBarsSpot) {
+                                      return lineBarsSpot.map((lineBarSpot) {
+                                        return LineTooltipItem(
+                                          lineBarSpot.y.toInt().toString(),
+                                          TextStyle(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .color,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
+                                  ),
                                 ),
+                                titlesData: widowsTile,
+                                borderData: FlBorderData(show: false),
+                                minX: 2,
+                                maxX:
+                                    (widowYearsChartList.length + 1).toDouble(),
+                                minY: 0,
+                                maxY: widowYearsMax * 2,
+                                lineBarsData: value,
                               ),
                             );
                           },
-                          valueListenable: lgaGroupDataVn,
+                          valueListenable: lineChartDataVn,
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          ValueListenableBuilder(
-            builder: (context, Map<String, int> value, child) {
-              if(value.isEmpty) return const SizedBox();
-              return CustomPieGraph(
-                sectionColor: empColor,
-                chartList: empChartList,
-                smallRadius: (w / 12),
-                largeRadius: ((w / 12)) + 20.0,
-                map: value,
-                centerSpaceRadius: 60,
-                indicatorList: empInd,
-                employmentStaDataList: empChartList,
-                centerText: const CustomText(
-                  text: "WIDOWS\nEMPLOYMENT\n STATUS",
-                  padding: EdgeInsets.only(right: 16, left: 16),
-                ),
-              );
-            },
-            valueListenable: employmentMapVn,
-          ),
-          ValueListenableBuilder(
-            builder: (context, Map<String, int> value, child) {
-              if(value.isEmpty) return const SizedBox();
-              return CustomPieGraph(
-                sectionColor: ngoColor,
-                chartList: ngoChartList,
-                smallRadius: w / 8 + 20,
-                largeRadius: (w / 8) + 50,
-                map: value,
-                indicatorList: nogInd,
-                legendText: const CustomText(
-                  text: "WIDOWS AFFILIATION TO NGO",
-                  padding: EdgeInsets.only(top: 34, right: 16, left: 16),
-                ),
-                employmentStaDataList: ngoChartList,
-              );
-            },
-            valueListenable: ngoMapVn,
-          ),
-          Material(
-            elevation: 10,
-            borderRadius: BorderRadius.circular(12.0),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomText(
-                    text: "YEARS SPENT AS A WIDOW",
-                    padding: EdgeInsets.only(right: 16, left: 16, top: 20),
-                  ),
-                  SizedBox(
-                    width: cw,
-                    height: ch,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                      child: ValueListenableBuilder(
-                        builder:
-                            (context, List<LineChartBarData> value, child) {
-                          if(value.isEmpty) return const SizedBox();
-                          return LineChart(
-                            LineChartData(
-                              showingTooltipIndicators:
-                                  showIndexes.map((index) {
-                                return ShowingTooltipIndicators([
-                                  LineBarSpot(
-                                    tooltipsOnBar,
-                                    lineChartBarData.indexOf(tooltipsOnBar),
-                                    tooltipsOnBar.spots[index],
-                                  ),
-                                ]);
-                              }).toList(),
-                              gridData: FlGridData(show: false),
-                              lineTouchData: LineTouchData(
-                                getTouchLineEnd: (data, index) => 0,
-                                getTouchedSpotIndicator:
-                                    (barData, List<int> spotIndexes) {
-                                  return spotIndexes
-                                      .map((spotIndex) {})
-                                      .toList();
-                                },
-                                enabled: true,
-                                touchTooltipData: LineTouchTooltipData(
-                                  tooltipBgColor: const Color(0xff602bf8),
-                                  tooltipRoundedRadius: 5,
-                                  tooltipPadding: const EdgeInsets.all(4),
-                                  getTooltipItems:
-                                      (List<LineBarSpot> lineBarsSpot) {
-                                    return lineBarsSpot.map((lineBarSpot) {
-                                      return LineTooltipItem(
-                                        lineBarSpot.y.toInt().toString(),
-                                        const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                      );
-                                    }).toList();
-                                  },
-                                ),
-                              ),
-                              titlesData: widowsTile,
-                              borderData: FlBorderData(show: false),
-                              minX: 2,
-                              maxX: (widowYearsChartList.length + 1).toDouble(),
-                              minY: 0,
-                              maxY: widowYearsMax * 2,
-                              lineBarsData: value,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Material(
+                elevation: 10,
+                borderRadius: BorderRadius.circular(12.0),
+                color: Theme.of(context).cardColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: "WIDOWS AGE AT SPOUSE BEREAVEMENT",
+                      padding:
+                          const EdgeInsets.only(top: 34, right: 16, left: 16),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 42.0, bottom: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 18,
+                            color: dark,
+                          ),
+                          CustomText(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            text: "Age range",
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
                             ),
-                          );
-                        },
-                        valueListenable: lineChartDataVn,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Material(
-              elevation: 10,
-              borderRadius: BorderRadius.circular(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomText(
-                    text: "WIDOWS AGE AT SPOUSE BEREAVEMENT",
-                    padding: EdgeInsets.only(top: 34, right: 16, left: 16),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 42.0, bottom: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 18,
-                          color: dark,
-                        ),
-                        const CustomText(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          text: "Age range",
-                        ),
-                      ],
+                    ValueListenableBuilder(
+                      builder: (context, Map<String, int> value, child) {
+                        if (value.isEmpty) return const SizedBox();
+                        return CustomBarChart(
+                          typeMax: spouseBerMax,
+                          smallWidth: 18,
+                          largeWidth: 18 + 10,
+                          map: value,
+                          groupsSpace: 10,
+                          gridData: gridData,
+                          borderData: borderData,
+                          titlesData: ageAtBereavementTile,
+                          alignment: BarChartAlignment.spaceAround,
+                        );
+                      },
+                      valueListenable: spouseBerDataVn,
                     ),
-                  ),
-                  ValueListenableBuilder(
-                    builder: (context, Map<String, int> value, child) {
-                      if(value.isEmpty) return const SizedBox();
-                      return CustomBarChart(
-                        typeMax: spouseBerMax,
-                        smallWidth: 18,
-                        largeWidth: 18 + 10,
-                        map: value,
-                        groupsSpace: 10,
-                        gridData: gridData,
-                        borderData: borderData,
-                        titlesData: ageAtBereavementTile,
-                        alignment: BarChartAlignment.spaceAround,
-                      );
-                    },
-                    valueListenable: spouseBerDataVn,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Material(
-              elevation: 10,
-              borderRadius: BorderRadius.circular(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomText(
-                    text: "WIDOWS TYPE OF OCCUPATION",
-                    padding: EdgeInsets.only(top: 34, right: 16, left: 16),
-                  ),
-                  ValueListenableBuilder(
-                    builder: (context, Map<String, int> value, child) {
-                      if(value.isEmpty) return const SizedBox();
-                      return CustomBarChart(
-                        typeMax: occupationTypeMax,
-                        smallWidth: 18,
-                        largeWidth: 18 + 10,
-                        map: value,
-                        groupsSpace: 10,
-                        gridData: gridData,
-                        borderData: borderData,
-                        titlesData: occupationTile,
-                        alignment: BarChartAlignment.spaceAround,
-                      );
-                    },
-                    valueListenable: occupationDataVn,
-                  )
-                ],
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Material(
+                elevation: 10,
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomText(
+                      text: "WIDOWS TYPE OF OCCUPATION",
+                      padding:
+                          const EdgeInsets.only(top: 34, right: 16, left: 16),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                    ValueListenableBuilder(
+                      builder: (context, Map<String, int> value, child) {
+                        if (value.isEmpty) return const SizedBox();
+                        return CustomBarChart(
+                          typeMax: occupationTypeMax,
+                          smallWidth: 18,
+                          largeWidth: 18 + 10,
+                          map: value,
+                          groupsSpace: 10,
+                          gridData: gridData,
+                          borderData: borderData,
+                          titlesData: occupationTile,
+                          alignment: BarChartAlignment.spaceAround,
+                        );
+                      },
+                      valueListenable: occupationDataVn,
+                    )
+                  ],
+                ),
               ),
             ),
+          ],
+        ),
+        drawer: Container(
+          color: Theme.of(context).cardColor,
+          width: width / 1.2,
+          child: ListView(
+            children: [
+              const CircleAvatar(
+                radius: 20,
+                child: Icon(Icons.person),
+              ),
+              Text(
+                "Nigeria Widows",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              )
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

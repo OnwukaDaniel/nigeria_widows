@@ -36,6 +36,7 @@ class AssetChat extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Material(
           elevation: 10,
+          color: Theme.of(context).cardColor,
           clipBehavior: Clip.hardEdge,
           borderRadius: BorderRadius.circular(18.0),
           child: Stack(

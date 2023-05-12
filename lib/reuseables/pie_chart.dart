@@ -70,67 +70,65 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
       countNgo++;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
-        elevation: 10,
-        borderRadius: BorderRadius.circular(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            widget.legendText,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: SizedBox(
-                    width: width.toDouble(),
-                    height: 350,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(child: widget.centerText),
-                        PieChart(
-                          PieChartData(
-                            pieTouchData: PieTouchData(
-                              touchCallback:
-                                  (FlTouchEvent event, pieTouchResponse) {
-                                setState(() {
-                                  if (!event.isInterestedForInteractions ||
-                                      pieTouchResponse == null ||
-                                      pieTouchResponse.touchedSection == null) {
-                                    touchedIndex = -1;
-                                    return;
-                                  }
-                                  touchedIndex = pieTouchResponse
-                                      .touchedSection!.touchedSectionIndex;
-                                });
-                              },
-                            ),
-                            centerSpaceRadius: widget.centerSpaceRadius,
-                            startDegreeOffset: 180,
-                            borderData: FlBorderData(show: false),
-                            sectionsSpace: 1,
-                            sections: widget.employmentStaDataList,
+    return Material(
+      elevation: 10,
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          widget.legendText,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 4,
+                child: SizedBox(
+                  width: width.toDouble(),
+                  height: 350,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(child: widget.centerText),
+                      PieChart(
+                        PieChartData(
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                              });
+                            },
                           ),
+                          centerSpaceRadius: widget.centerSpaceRadius,
+                          startDegreeOffset: 180,
+                          borderData: FlBorderData(show: false),
+                          sectionsSpace: 1,
+                          sections: widget.employmentStaDataList,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.indicatorList,
-                  ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: widget.indicatorList,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
