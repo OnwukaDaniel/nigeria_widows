@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'home.dart';
+import 'landing.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Timer(const Duration(seconds: 3), () async {
-        Navigator.of(context).pushReplacementNamed(Home.id);
+        Navigator.of(context).pushReplacementNamed(Landing.id);
       },
     );
     super.initState();

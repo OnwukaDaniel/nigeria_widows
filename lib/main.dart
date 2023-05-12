@@ -3,6 +3,9 @@ import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
 
+import 'screens/landing.dart';
+import 'screens/settings.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -22,6 +25,8 @@ class MyApp extends StatelessWidget {
           home: const SplashScreen(),
           routes: {
             Home.id: (ctx) => const Home(),
+            Settings.id: (ctx) => const Settings(),
+            Landing.id: (ctx) => const Landing(),
           },
         );
       },
