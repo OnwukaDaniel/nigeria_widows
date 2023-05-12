@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppTheme{
+class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     appBarTheme: const AppBarTheme(
       color: Colors.transparent,
@@ -9,7 +9,8 @@ class AppTheme{
     dividerColor: Colors.grey,
     backgroundColor: const Color(0xfff8fcfa),
     cardColor: Colors.white,
-    cardTheme: const CardTheme(color: Colors.blueAccent),
+    fontFamily: 'Rubik',
+    cardTheme: const CardTheme(color: Colors.white60),
     primaryColor: const Color.fromARGB(255, 255, 255, 255),
     textTheme: const TextTheme(bodyText1: TextStyle(color: Colors.black)),
   );
@@ -20,6 +21,7 @@ class AppTheme{
       iconTheme: IconThemeData(color: Colors.white),
     ),
     dividerColor: Colors.white,
+    fontFamily: 'Rubik',
     backgroundColor: Colors.black87,
     cardColor: const Color(0xff444343),
     cardTheme: const CardTheme(color: Color(0xff444343)),
