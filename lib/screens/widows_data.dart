@@ -157,10 +157,10 @@ class _WidowsDataState extends State<WidowsData> {
                 var g = const BorderSide(color: Colors.grey);
                 var border = Border(top: g, bottom: g, right: g, left: g);
 
+                print("Last ****** s $s ****** $selectedPage");
                 if (s == value.first) {
                   boxDecoration = BoxDecoration(
-                    border:
-                        selectedPage.toString() != s ? border : const Border(),
+                    border: border,
                     color: selectedPage.toString() == s
                         ? AppColor.appColor
                         : Colors.transparent,
@@ -177,9 +177,8 @@ class _WidowsDataState extends State<WidowsData> {
                   );
                 } else if (s == value.last) {
                   boxDecoration = BoxDecoration(
-                    border:
-                        selectedPage.toString() != s ? border : const Border(),
-                    color: selectedPage == index
+                    border: border,
+                    color: selectedPage.toString() == s
                         ? AppColor.appColor
                         : Colors.transparent,
                     borderRadius: BorderRadius.only(
@@ -191,8 +190,7 @@ class _WidowsDataState extends State<WidowsData> {
                   );
                 } else {
                   boxDecoration = BoxDecoration(
-                    border:
-                        selectedPage.toString() != s ? border : const Border(),
+                    border: border,
                     color: selectedPage.toString() == s
                         ? AppColor.appColor
                         : Colors.transparent,
@@ -202,7 +200,6 @@ class _WidowsDataState extends State<WidowsData> {
                 return GestureDetector(
                   onTap: () {
                     context.read<UsersViewModel>().setPageIndex(value[index]);
-                    print("Index ***************** ${index + 1}");
                   },
                   child: Container(
                     width: boxDim,

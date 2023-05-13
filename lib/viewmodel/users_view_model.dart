@@ -65,10 +65,10 @@ class UsersViewModel extends ChangeNotifier {
               list.add(first.toString());
             } else if (i == pagesCurrent){
               list.add(pagesCurrent.toString());
-            } else if (i == second && second < _pagesCount){
+            } else if (i == second && second <= _pagesCount){
               list.add(second.toString());
             } else if(i == _pagesCount && pagesCurrent != _pagesCount){ //final
-              list.add(i.toString());
+              //list.add(i.toString());
               list.add("...");
               list.add(">>");
             } else if(i == _pagesCount && pagesCurrent == _pagesCount){ //final
