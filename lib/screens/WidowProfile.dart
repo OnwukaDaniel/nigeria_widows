@@ -65,10 +65,7 @@ class _WidowProfileState extends State<WidowProfile> {
                               style: TextStyle(
                                 color: selectedData == 0
                                     ? Colors.white
-                                    : Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .color,
+                                    : Colors.black,
                               ),
                             ),
                           ),
