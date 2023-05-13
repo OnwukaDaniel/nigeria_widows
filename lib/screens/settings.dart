@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nigerian_widows/util/app_constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../sharednotifiers/app.dart';
 import '../theme/apptheme.dart';
@@ -14,6 +15,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -46,7 +48,9 @@ class _SettingsState extends State<Settings> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    var pref = await SharedPreferences.getInstance();
+                    pref.setBool("isDark", false);
                     AppNotifier.appTheme.value = AppTheme.lightTheme;
                   },
                   child: ThemeDummy(
@@ -56,7 +60,9 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    var pref = await SharedPreferences.getInstance();
+                    pref.setBool("isDark", true);
                     AppNotifier.appTheme.value = AppTheme.darkTheme;
                   },
                   child: ThemeDummy(

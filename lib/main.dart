@@ -2,16 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
+import 'package:nigerian_widows/theme/apptheme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/WidowProfile.dart';
 import 'screens/landing.dart';
 import 'screens/settings.dart';
+import 'screens/widows_data.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    getPref();
+  }
+
+  Future<void> getPref() async {
+    var pref = await SharedPreferences.getInstance();
+    bool isDark = pref.getBool("isDark") == null? false : pref.getBool
+      ("isDark")!;
+    AppNotifier.appTheme.value =
+        isDark == true ? AppTheme.darkTheme : AppTheme.lightTheme;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +50,7 @@ class MyApp extends StatelessWidget {
             Home.id: (ctx) => const Home(),
             Settings.id: (ctx) => const Settings(),
             Landing.id: (ctx) => const Landing(),
+            WidowsData.id: (ctx) => const WidowsData(),
           },
         );
       },

@@ -8,6 +8,7 @@ import 'package:nigerian_widows/util/app_constants.dart';
 
 import '../reuseables/resuable_text.dart';
 import '../sharednotifiers/app.dart';
+import 'widows_data.dart';
 
 class Landing extends StatefulWidget {
   static const String id = "Landing";
@@ -24,7 +25,7 @@ class _LandingState extends State<Landing> {
 
   List<Widget> fragments = [
     const Home(),
-    const SizedBox(),
+    const WidowsData(),
     const Settings(),
   ];
 
@@ -97,7 +98,7 @@ class _LandingState extends State<Landing> {
                   const Divider(),
                   ValueListenableBuilder(
                     valueListenable: selectedVN,
-                    builder: (BuildContext context, int value, Widget? child) {
+                    builder: (_, int value, Widget? child) {
                       return Column(
                         children: [
                           GestureDetector(
@@ -116,7 +117,7 @@ class _LandingState extends State<Landing> {
                           GestureDetector(
                             onTap: () {
                               _scaffoldKey.currentState!.closeDrawer();
-                              selectedVN.value = 1;
+                              Navigator.pushNamed(context, WidowsData.id);
                             },
                             child: DrawerItem(
                               text: "Widows Data",
@@ -231,7 +232,7 @@ class DrawerItem extends StatelessWidget {
                 text: text,
                 style: TextStyle(
                   fontSize: 14,
-                  color: color == Colors.transparent ? Colors.black : Colors.white,
+                  color: color == Colors.transparent ? Theme.of(context).textTheme.bodyText1!.color : Colors.white,
                 ),
               ),
             ],
