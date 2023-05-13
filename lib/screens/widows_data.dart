@@ -14,7 +14,8 @@ class WidowsData extends StatefulWidget {
 }
 
 class _WidowsDataState extends State<WidowsData> {
-  ValueNotifier<List<String>> pageVn = ValueNotifier(["1", "2"]);
+  ValueNotifier<List<String>> pageVn = ValueNotifier(["1", "2", "3", "4", "5"]);
+  ValueNotifier<int> selectedPageVn = ValueNotifier(0);
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,7 @@ class _WidowsDataState extends State<WidowsData> {
         ),
       ),
       body: ListView(
+        padding: const EdgeInsets.all(8),
         physics: const BouncingScrollPhysics(),
         children: [
           GridView.builder(
@@ -111,59 +113,72 @@ class _WidowsDataState extends State<WidowsData> {
           ValueListenableBuilder(
             valueListenable: pageVn,
             builder: (_, List<String> value, Widget? child) {
+              return Center(
+                child: SizedBox(
+                  height: 50,
+                  child: ValueListenableBuilder(
+                    valueListenable: selectedPageVn,
+                    builder: (_, int selectedPage, Widget? child) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: value.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var s = value[index];
+                          double boxDim = 50;
+                          double borderDim = 10;
+                          var boxDecoration = const BoxDecoration();
+                          if (s == "1") {
+                            boxDecoration = BoxDecoration(
+                              color: selectedPage == index
+                                  ? AppColor.appColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(borderDim),
+                                bottomLeft: Radius.circular(borderDim),
+                                bottomRight: value.length == 1
+                                    ? Radius.circular(borderDim)
+                                    : const Radius.circular(0),
+                                topRight: value.length == 1
+                                    ? Radius.circular(borderDim)
+                                    : const Radius.circular(0),
+                              ),
+                            );
+                          } else if (index == value.length - 1) {
+                            boxDecoration = BoxDecoration(
+                              color: selectedPage == index
+                                  ? AppColor.appColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                topLeft: const Radius.circular(0),
+                                bottomLeft: const Radius.circular(0),
+                                bottomRight: Radius.circular(borderDim),
+                                topRight: Radius.circular(borderDim),
+                              ),
+                            );
+                          } else {
+                            boxDecoration = BoxDecoration(
+                              color: selectedPage == index
+                                  ? AppColor.appColor
+                                  : Colors.transparent,
+                            );
+                          }
 
-              return SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: value.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    var s = value[index];
-                    if (s == "1") {
-                      return Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.appColor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(3),
-                            bottomLeft: const Radius.circular(3),
-                            bottomRight: value.length == 1
-                                ? const Radius.circular(3)
-                                : const Radius.circular(0),
-                            topRight: value.length == 1
-                                ? const Radius.circular(3)
-                                : const Radius.circular(0),
-                          ),
-                        ),
-                        child: Text(s),
+                          return GestureDetector(
+                            onTap: () {
+                              selectedPageVn.value = index;
+                            },
+                            child: Container(
+                              width: boxDim,
+                              height: boxDim,
+                              decoration: boxDecoration,
+                              child: Center(child: Text(s)),
+                            ),
+                          );
+                        },
                       );
-                    } else if (index == value.length - 1) {
-                      return Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.appColor,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(0),
-                            bottomLeft: Radius.circular(0),
-                            bottomRight: Radius.circular(3),
-                            topRight: Radius.circular(3),
-                          ),
-                        ),
-                        child: Text(s),
-                      );
-                    } else {
-                      return Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: AppColor.appColor,
-                        ),
-                        child: Text(s),
-                      );
-                    }
-                  },
+                    },
+                  ),
                 ),
               );
             },
