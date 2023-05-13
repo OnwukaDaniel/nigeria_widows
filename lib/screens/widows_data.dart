@@ -157,7 +157,6 @@ class _WidowsDataState extends State<WidowsData> {
                 var g = const BorderSide(color: Colors.grey);
                 var border = Border(top: g, bottom: g, right: g, left: g);
 
-                print("Last ****** s $s ****** $selectedPage");
                 if (s == value.first) {
                   boxDecoration = BoxDecoration(
                     border: border,

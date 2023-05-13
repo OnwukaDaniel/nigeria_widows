@@ -22,7 +22,7 @@ class UserServices {
     try {
       List<WidowData> result = [];
       for (int i = 0; i < 16; i++) {
-        result.add(WidowData());
+        result.add(WidowData(name: page.toString()));
       }
       return Future(() => Success(code: 200, response: result));
     } catch (e) {
