@@ -18,6 +18,7 @@ class WidowsData extends StatefulWidget {
 }
 
 class _WidowsDataState extends State<WidowsData> {
+
   @override
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -226,14 +227,14 @@ class _WidowsDataState extends State<WidowsData> {
 }
 
 class DetailItem extends StatelessWidget {
+  final String data1;
+  final String data2;
+
   const DetailItem({
     Key? key,
     required this.data1,
     required this.data2,
   }) : super(key: key);
-
-  final String data1;
-  final String data2;
 
   @override
   Widget build(BuildContext context) {
