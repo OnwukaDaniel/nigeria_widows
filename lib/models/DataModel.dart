@@ -1,58 +1,58 @@
 import 'dart:ffi';
 
 class DataModel {
-  String? ngoName;
-  String? fullName;
-  String? husbandOccupation;
-  String? accountName;
-  String? address;
-  String? ngoMembership;
-  String? husbandName;
-  String? employmentStatus;
-  String? state;
-  int? numberOfChildren;
+  String? ngoName = "";
+  String? fullName = "";
+  String? husbandOccupation = "";
+  String? accountName = "";
+  String? address = "";
+  String? ngoMembership = "";
+  String? husbandName = "";
+  String? employmentStatus = "";
+  String? state = "";
+  int? numberOfChildren = 0;
   String occupation = "";
-  String? id;
-  String? dob;
-  String? phoneNumber;
-  String? husbandBereavementDate;
-  String? homeTown;
-  String? bankName;
-  String? senatorialZone;
-  String? lga;
-  int? yearOfMarriage;
-  String? accountNumber;
-  String? categoryBasedOnNeeds;
-  int? oneOrTwo;
-  String? registrationDate;
-  String? receivedBy;
+  String? id = "";
+  String? dob = "";
+  String? phoneNumber = "";
+  String? husbandBereavementDate = "";
+  String? homeTown = "";
+  String? bankName = "";
+  String? senatorialZone = "";
+  String? lga = "";
+  int? yearOfMarriage = 0;
+  String? accountNumber = "";
+  String? categoryBasedOnNeeds = "";
+  int? oneOrTwo = 0;
+  String? registrationDate = "";
+  String? receivedBy = "";
 
   DataModel(
-      this.ngoName,
-      this.fullName,
-      this.husbandOccupation,
-      this.accountName,
-      this.address,
-      this.ngoMembership,
-      this.husbandName,
-      this.employmentStatus,
-      this.state,
-      this.numberOfChildren,
-      this.occupation,
-      this.id,
-      this.dob,
-      this.phoneNumber,
-      this.husbandBereavementDate,
-      this.homeTown,
-      this.bankName,
-      this.senatorialZone,
-      this.lga,
-      this.yearOfMarriage,
-      this.accountNumber,
-      this.categoryBasedOnNeeds,
-      this.oneOrTwo,
-      this.registrationDate,
-      this.receivedBy);
+      {this.ngoName = "",
+      this.fullName = "",
+      this.husbandOccupation = "",
+      this.accountName = "",
+      this.address = "",
+      this.ngoMembership = "",
+      this.husbandName = "",
+      this.employmentStatus = "",
+      this.state = "",
+      this.numberOfChildren = 0,
+      this.occupation = "",
+      this.id = "",
+      this.dob = "",
+      this.phoneNumber = "",
+      this.husbandBereavementDate = "",
+      this.homeTown = "",
+      this.bankName = "",
+      this.senatorialZone = "",
+      this.lga = "",
+      this.yearOfMarriage = 0,
+      this.accountNumber = "",
+      this.categoryBasedOnNeeds = "",
+      this.oneOrTwo = 0,
+      this.registrationDate = "",
+      this.receivedBy = ""});
 
   DataModel.fromJson(Map<String, dynamic> json) {
     ngoName = json['ngoName'];

@@ -12,6 +12,7 @@ import 'screens/landing.dart';
 import 'screens/settings.dart';
 import 'screens/widows_data.dart';
 import 'viewmodel/paging_view_model.dart';
+import 'viewmodel/widow_json_view_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,6 +46,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => UsersViewModel()),
         ChangeNotifierProvider(create: (_) => PagingViewModel()),
+        ChangeNotifierProvider(create: (_) => WidowJsonViewModel()),
       ],
       child: ValueListenableBuilder(
         valueListenable: AppNotifier.appTheme,

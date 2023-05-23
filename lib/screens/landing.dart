@@ -117,7 +117,8 @@ class _LandingState extends State<Landing> {
                           GestureDetector(
                             onTap: () {
                               _scaffoldKey.currentState!.closeDrawer();
-                              Navigator.pushNamed(context, WidowsData.id);
+                              selectedVN.value = 1;
+                              //Navigator.pushNamed(context, WidowsData.id);
                             },
                             child: DrawerItem(
                               text: "Widows Data",
@@ -128,34 +129,22 @@ class _LandingState extends State<Landing> {
                             ),
                           ),
                           const Divider(),
+                          GestureDetector(
+                            onTap: () {
+                              _scaffoldKey.currentState!.closeDrawer();
+                              selectedVN.value = 2;
+                            },
+                            child: DrawerItem(
+                              text: "Settings",
+                              color: value == 2
+                                  ? AppColor.appColor
+                                  : Colors.transparent,
+                              icon: Icons.settings_sharp,
+                            ),
+                          ),
                         ],
                       );
                     },
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _scaffoldKey.currentState!.closeDrawer();
-                      Navigator.pushNamed(context, Settings.id);
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Icon(
-                            Icons.settings_sharp,
-                            color: Theme.of(context).textTheme.bodyText1!.color,
-                          ),
-                        ),
-                        CustomText(
-                          padding: const EdgeInsets.all(16),
-                          text: "Settings",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).textTheme.bodyText1!.color,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                   const Spacer(),
                   InkWell(
