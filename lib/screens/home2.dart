@@ -17,16 +17,16 @@ import '../reuseables/pie_indicators.dart';
 import '../reuseables/resuable_text.dart';
 import '../reuseables/value_notifiers.dart';
 
-class Home extends StatefulWidget {
+class HomeTest extends StatefulWidget {
   static const String id = "home";
 
-  const Home({Key? key}) : super(key: key);
+  const HomeTest({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeTest> createState() => _HomeTestState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeTestState extends State<HomeTest> {
   ValueNotifier<Pair> ageAtBereavementTileVn =
       ValueNotifier(Pair(second: FlTitlesData()));
 

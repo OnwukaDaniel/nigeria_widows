@@ -15,6 +15,7 @@ import 'viewmodel/paging_view_model.dart';
 import 'viewmodel/widow_json_view_model.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
