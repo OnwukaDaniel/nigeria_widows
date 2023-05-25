@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nigerian_widows/screens/home.dart';
+import 'package:nigerian_widows/screens/home2.dart';
 import 'package:nigerian_widows/screens/settings.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/util/app_constants.dart';
@@ -24,7 +25,7 @@ class _LandingState extends State<Landing> {
   ValueNotifier<int> selectedVN = ValueNotifier(0);
 
   List<Widget> fragments = [
-    const Home(),
+    const HomeTest(),
     const WidowsData(),
     const Settings(),
   ];

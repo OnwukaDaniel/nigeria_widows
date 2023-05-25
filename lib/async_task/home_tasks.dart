@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:async_task/async_task.dart';
 
-';
 import '../models/DataModel.dart';
 
 class Tasks extends AsyncTask<List<DataModel>, List<String>> {
+  List<DataModel> data;
+
+  Tasks(this.data);
+
   List<String> lgas = [];
   List<String> nogList = [];
   List<String> spouseBerList = [];
@@ -13,13 +16,10 @@ class Tasks extends AsyncTask<List<DataModel>, List<String>> {
   List<String> employmentStatList = [];
   List<String> widowYearsList = [];
 
-  final List<DataModel> data;
-
-  Tasks(this.data);
-
   @override
   AsyncTask<List<DataModel>, List<String>> instantiate(
-      List<DataModel>parameters, [Map<String, SharedData>? sharedData]) {
+      List<DataModel> parameters,
+      [Map<String, SharedData>? sharedData]) {
     return Tasks(parameters);
   }
 
@@ -27,23 +27,57 @@ class Tasks extends AsyncTask<List<DataModel>, List<String>> {
   List<DataModel> parameters() {
     return data;
   }
+
   @override
   FutureOr<List<String>> run() {
-    throw UnimplementedError();
+    return computeLga(data);
   }
 
-  d(){
+  Future<List<String>> computeLga(List<DataModel> data) async {
+    print("Execution started fetching data ************************* ");
     for (DataModel x in data) {
       lgas.add(x.lga!);
-      nogList.add(x.ngoMembership!);
-      employmentStatList.add(x.employmentStatus!);
+    }
+    print("Execution finished fetching data ************************* ");
+    return lgas;
+  }
+
+  List<String> computeNogList(List<DataModel> data) {
+    for (DataModel x in data) {
+      nogList.add(x.lga!);
+    }
+    return nogList;
+  }
+
+  List<String> computeEmploymentStatList(List<DataModel> data) {
+    for (DataModel x in data) {
+      employmentStatList.add(x.lga!);
+    }
+    return employmentStatList;
+  }
+
+  List<String> computeSpouseBerList(List<DataModel> data) {
+    for (DataModel x in data) {
       var lonelyYears = smartDate(x.husbandBereavementDate!, x.dob!);
       spouseBerList.add(lonelyYears);
+    }
+    return spouseBerList;
+  }
+
+  List<String> computeOccupationList(List<DataModel> data) {
+    for (DataModel x in data) {
       occupationList.add(x.occupation);
+    }
+    return occupationList;
+  }
+
+  List<String> computeWidowYearsList(List<DataModel> data) {
+    for (DataModel x in data) {
       var widowYears =
-      widowTime(x.husbandBereavementDate!, x.registrationDate!);
+          widowTime(x.husbandBereavementDate!, x.registrationDate!);
       widowYearsList.add(widowYears);
     }
+    return widowYearsList;
   }
 
   String smartDate(String input, String dob) {

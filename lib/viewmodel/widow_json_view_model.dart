@@ -29,7 +29,7 @@ class WidowJsonViewModel extends ChangeNotifier {
     _setLoading(true);
     final String response = await rootBundle.loadString("assets/data.json");
     List<dynamic> j = json.decode(response);
-    jsonDataModelVN.value =
+    AppNotifier.jsonDataModelVN.value =
         j.map((e) => DataModel.fromJson(e as Map<String, dynamic>)).toList();
     _setLoading(false);
     return _data;

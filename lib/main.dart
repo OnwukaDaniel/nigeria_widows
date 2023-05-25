@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
@@ -7,6 +10,7 @@ import 'package:nigerian_widows/viewmodel/users_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'models/DataModel.dart';
 import 'screens/WidowProfile.dart';
 import 'screens/landing.dart';
 import 'screens/settings.dart';
@@ -27,8 +31,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  execute() async {
+    final String response = await rootBundle.loadString("assets/data.json");
+    List<dynamic> j = json.decode(response);
+    var data = j.map((e) => DataModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    data.sort((a, b) {
+      var bList = b.husbandBereavementDate!
+          .toLowerCase()
+          .replaceAll(",", "")
+          .split(" ");
+      var aList = a.husbandBereavementDate!
+          .toLowerCase()
+          .replaceAll(",", "")
+          .split(" ");
+      return bList.last.compareTo(aList.last);
+    });
+    AppNotifier.jsonDataModelVN.value = data;
+  }
+
   @override
   void initState() {
+    execute();
     super.initState();
     getPref();
   }
