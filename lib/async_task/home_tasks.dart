@@ -27,7 +27,6 @@ class Tasks extends AsyncTask<List<DataModel>, List<String>> {
   List<DataModel> parameters() {
     return data;
   }
-
   @override
   FutureOr<List<String>> run() {
     throw UnimplementedError();
