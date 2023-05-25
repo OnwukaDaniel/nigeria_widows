@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,24 +9,102 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 
 import '../models/DataModel.dart';
+import '../models/pair.dart';
+import '../reuseables/app_spinner.dart';
+import '../reuseables/asset_chart.dart';
+import '../reuseables/pie_chart.dart';
+import '../reuseables/pie_indicators.dart';
+import '../reuseables/resuable_text.dart';
+import '../reuseables/value_notifiers.dart';
 import '../sharednotifiers/app.dart';
+
+const Color light = Color(0xfff2f2ff);
+const Color normal = Color(0xff64caad);
+const Color dark = Color(0xff602bfa);
+
+List<Color> gradientColors = [
+  const Color(0xff7948ff),
+  const Color(0xffa08ae1),
+  const Color(0xffffffff),
+];
+
+final List<Color> ngoColor = [
+  const Color(0xFFADA5C2),
+  const Color(0xFF039CDD),
+  const Color(0xFF602BF8),
+];
+
+final List<Color> empColor = [
+  const Color(0xFF723EFF),
+  const Color(0xFFDC950A),
+  const Color(0xFF3EBFF6),
+  const Color(0xFFFDE567),
+  const Color(0xFF039CDD),
+  const Color(0xFF000000),
+];
 
 computeLga(List<DataModel> value) async {
   List<String> lgas = [];
+  List<BarChartGroupData> barLga = [];
+  List<String> lgaLegend = [];
 
   for (DataModel x in value) {
     lgas.add(x.lga!);
   }
   lgas.sort((a, b) => b.compareTo(a));
-  return lgas;
+  var lgaMap = lgas.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  lgaCountVn.value = lgaMap.length;
+  var localGovtMax = lgaMap.values.toList().reduce(max).toDouble();
+
+  for (String x in lgaMap.keys) {
+    BarChartRodData rod = BarChartRodData(
+      toY: localGovtMax + 50,
+      rodStackItems: [
+        BarChartRodStackItem(0, lgaMap[x]!.toDouble(), dark),
+        BarChartRodStackItem(lgaMap[x]!.toDouble(), localGovtMax + 50, light),
+      ],
+      borderRadius: BorderRadius.zero,
+    );
+    barLga.add(
+      BarChartGroupData(x: lgaLegend.length, barsSpace: 4, barRods: [rod]),
+    );
+    lgaLegend.add(x);
+  }
+  return [lgaLegend, barLga];
 }
 
 computeNogList(List<DataModel> value) async {
   List<String> nogList = [];
+  List<PieIndicators> nogInd = [];
 
   for (DataModel x in value) {
     nogList.add(x.lga!);
   }
+
+  var nogShipMap = nogList.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  ngoMapVn.value = nogShipMap;
+
+  var countNgo = 0;
+  /*for (String x in nogShipMap.keys) {
+    nogInd.add(
+      PieIndicators(
+          textWidget: Text(
+            x,
+            style: const TextStyle(
+              fontSize: 12,
+              overflow: TextOverflow.clip,
+            ),
+          ),
+          color: ngoColor[countNgo]),
+    );
+    countNgo++;
+  }*/
   return nogList;
 }
 
@@ -34,37 +114,99 @@ computeEmploymentStatList(List<DataModel> value) async {
   for (DataModel x in value) {
     employmentStatList.add(x.employmentStatus!);
   }
-  return employmentStatList;
+  var empMap = employmentStatList.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  employmentMapVn.value = empMap;
+
+  List<PieIndicators> empInd = [];
+  var countEmp = 0;
+  for (String x in empMap.keys) {
+    empInd.add(
+      PieIndicators(
+          textWidget: Text(
+            x,
+            style: const TextStyle(
+              fontSize: 12,
+              overflow: TextOverflow.clip,
+            ),
+          ),
+          color: empColor[countEmp]),
+    );
+    countEmp++;
+  }
+  return [empMap, empInd];
 }
 
 computeOccupationList(List<DataModel> value) async {
   List<String> occupationList = [];
+  List<String> occupationLegend = [];
 
   for (DataModel x in value) {
     occupationList.add(x.occupation);
   }
-  return occupationList;
+  var occupationMap = occupationList.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  occupationDataVn.value = occupationMap;
+
+  for (String x in occupationMap.keys) {
+    occupationLegend.add(x);
+  }
+  return occupationLegend;
 }
 
 computeSpouseBerList(List<DataModel> value) async {
   List<String> spouseBerList = [];
+  List<String> spouseBerLegend = [];
 
   for (DataModel x in value) {
     var lonelyYears = smartDate(x.husbandBereavementDate!, x.dob!);
     spouseBerList.add(lonelyYears);
   }
   spouseBerList.sort((a, b) => b.compareTo(a));
-  return spouseBerList;
+  var spouseBerMap = spouseBerList.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  spouseBerDataVn.value = spouseBerMap;
+
+  for (String x in spouseBerMap.keys.toList().reversed) {
+    var xx = "";
+    if (x == "20") {
+      xx = "<20";
+    } else {
+      xx = x;
+    }
+    spouseBerLegend.add(xx);
+  }
+  return spouseBerLegend;
 }
 
 computeWidowYearsList(List<DataModel> value) async {
   List<String> widowYearsList = [];
+  List<FlSpot> widowYearsChartList = [];
+  List<String> widowYearsLegend = [];
 
   for (DataModel x in value) {
     var widowYears =
     widowTime(x.husbandBereavementDate!, x.registrationDate!);
     widowYearsList.add(widowYears);
   }
+  var widowYearsMap = widowYearsList.fold<Map<String, int>>({}, (map, element) {
+    map[element] = (map[element] ?? 0) + 1;
+    return map;
+  });
+  var widowYearsMax = widowYearsMap.values.toList().reduce(max).toDouble();
+
+  for (String x in widowYearsMap.keys) {
+    var len = widowYearsChartList.length;
+    widowYearsChartList.add(FlSpot((len + 2).toDouble(), widowYearsMap[x]!.toDouble()));
+    widowYearsLegend.add(x);
+  }
+
   return widowYearsList;
 }
 
@@ -105,6 +247,15 @@ class _HomeTestState extends State<HomeTest> {
 
   @override
   Widget build(BuildContext context) {
+    int width = MediaQuery.of(context).size.width.toInt();
+    int w = 360;
+    int h = 150;
+    double aspectRatio = w / h;
+    double rootAspectRatio = sqrt(aspectRatio);
+
+    double cw = width * rootAspectRatio;
+    double ch = cw / aspectRatio;
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: ValueListenableBuilder(
@@ -117,7 +268,25 @@ class _HomeTestState extends State<HomeTest> {
                 future: compute(computeLga, value),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return SpinKitCubeGrid(color: AppColor.appColor, size: 200);
+                    return AssetChat(
+                      legendText: CustomText(
+                        text: "TOTAL NUMBER OF WIDOWS REGISTERED",
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                      ),
+                      countText: CustomText(
+                        text: "${value.length}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 30,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                        padding: EdgeInsets.only(bottom: ch / 4),
+                      ),
+                      iconPath: "assets/icons/people_icons.png",
+                      wavePath: "assets/icons/wave_graph1.png",
+                    );
                   }
                   return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
                 },
@@ -126,7 +295,169 @@ class _HomeTestState extends State<HomeTest> {
                 future: compute(computeNogList, value),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return SpinKitCubeGrid(color: AppColor.appColor, size: 200);
+                    return AssetChat(
+                      legendText: CustomText(
+                        text: "SELECT LOCAL GOVERNMENT",
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                      ),
+                      countText: CustomText(
+                        text: "${value.length}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 30,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                        padding: EdgeInsets.only(bottom: ch / 4),
+                      ),
+                      iconPath: "assets/icons/healthy_community.png",
+                      wavePath: "assets/icons/wave_graph.png",
+                    );;
+                  }
+                  return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
+                },
+              ),
+              FutureBuilder(
+                future: compute(computeLga, value),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    var lgaLegend = (snapshot.data as List<dynamic>).first as List<String>;
+                    var barData = (snapshot.data as List<dynamic>).last as List<BarChartGroupData>;
+                    var pair = Pair(
+                      second: FlTitlesData(
+                        show: true,
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 90,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              var style = TextStyle(
+                                color: Theme.of(context).textTheme.bodyText1!.color,
+                                fontSize: 10,
+                              );
+                              var text =
+                              lgaLegend.isEmpty ? "" : "${lgaLegend[value.toInt()]} - ";
+                              return SideTitleWidget(
+                                space: 36.0,
+                                axisSide: meta.axisSide,
+                                angle: 98.96,
+                                child: Text(text, style: style),
+                              );
+                            },
+                          ),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: 200,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              var style = TextStyle(
+                                  color: Theme.of(context).textTheme.bodyText1!.color,
+                                  fontSize: 10);
+                              return SideTitleWidget(
+                                angle: 98.96,
+                                space: 15,
+                                axisSide: meta.axisSide,
+                                child: Column(
+                                  children: [
+                                    const RotatedBox(quarterTurns: 1, child: Text("-")),
+                                    Text(meta.formattedValue, style: style),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                      first: "ready",
+                    );
+
+                    return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: Material(
+                          elevation: 10,
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.circular(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                text: "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
+                                padding:
+                                const EdgeInsets.only(top: 34, right: 12, left: 12),
+                                style: TextStyle(
+                                  color: Theme.of(context).textTheme.bodyText1!.color,
+                                ),
+                              ),
+                              SizedBox(
+                                width: width.toDouble(),
+                                height: 350,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
+                                  child: RotatedBox(
+                                    quarterTurns: 1,
+                                    child: BarChart(
+                                      BarChartData(
+                                        alignment: BarChartAlignment.center,
+                                        groupsSpace: 8,
+                                        barGroups: barData,
+                                        titlesData: pair.second,
+                                        gridData: FlGridData(
+                                          show: false,
+                                          drawVerticalLine: false,
+                                        ),
+                                        borderData: FlBorderData(show: false),
+                                        barTouchData: BarTouchData(
+                                          touchTooltipData: BarTouchTooltipData(
+                                            fitInsideHorizontally: true,
+                                            fitInsideVertically: true,
+                                            tooltipBgColor: AppColor.appColor,
+                                            getTooltipItem:
+                                                (groupData, int1, rodData, int2) {
+                                              return BarTooltipItem(
+                                                rodData.rodStackItems.first.toY
+                                                    .toString(),
+                                                TextStyle(
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1!
+                                                      .color,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          handleBuiltInTouches: true,
+                                          allowTouchBarBackDraw: true,
+                                          touchCallback: (FlTouchEvent event,
+                                              barTouchResponse) {
+                                            if (!event
+                                                .isInterestedForInteractions ||
+                                                barTouchResponse == null ||
+                                                barTouchResponse.spot == null) {
+                                              return;
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                   }
                   return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
                 },
@@ -135,16 +466,26 @@ class _HomeTestState extends State<HomeTest> {
                 future: compute(computeEmploymentStatList, value),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return SpinKitCubeGrid(color: AppColor.appColor, size: 200);
-                  }
-                  return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
-                },
-              ),
-              FutureBuilder(
-                future: compute(computeOccupationList, value),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return SpinKitCubeGrid(color: AppColor.appColor, size: 200);
+                    Map<String, int> data = (snapshot.data as List<dynamic>)[0] as Map<String, int>;
+                    List<PieIndicators> empInd = (snapshot.data as List<dynamic>)[1] as List<PieIndicators>;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: CustomPieGraph(
+                        sectionColor: empColor,
+                        smallRadius: (w / 12),
+                        largeRadius: ((w / 12)) + 20.0,
+                        map: data,
+                        centerSpaceRadius: 60,
+                        centerText: CustomText(
+                          text: "WIDOWS\nEMPLOYMENT\n STATUS",
+                          padding: const EdgeInsets.only(right: 16, left: 16),
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyText1!.color,
+                          ),
+                        ),
+                      ),
+                    );
                   }
                   return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
                 },

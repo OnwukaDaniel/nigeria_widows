@@ -4,24 +4,18 @@ import 'package:nigerian_widows/reuseables/pie_indicators.dart';
 import 'package:nigerian_widows/reuseables/resuable_text.dart';
 
 class CustomPieGraph extends StatefulWidget {
-  final List<PieIndicators> indicatorList;
   final CustomText legendText;
   final CustomText centerText;
   final double centerSpaceRadius;
-  final List<PieChartSectionData> employmentStaDataList;
   final double smallRadius;
   final double largeRadius;
   final Map<String, int> map;
   final List<Color> sectionColor;
-  final List<PieChartSectionData> chartList;
 
   const CustomPieGraph({
     Key? key,
-    required this.indicatorList,
     required this.smallRadius,
     required this.largeRadius,
-    required this.chartList,
-    required this.employmentStaDataList,
     required this.sectionColor,
     this.legendText = const CustomText(
       text: '',
@@ -41,14 +35,47 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
   int touchedIndex = -1;
   double radius = 0;
   bool isTouched = false;
+  List<PieChartSectionData> sectionsData = [];
+  List<PieIndicators> indicatorList = [];
+
+  final List<Color> empColor = [
+    const Color(0xFF723EFF),
+    const Color(0xFFDC950A),
+    const Color(0xFF3EBFF6),
+    const Color(0xFFFDE567),
+    const Color(0xFF039CDD),
+    const Color(0xFF000000),
+  ];
+
+  @override
+  void initState() {
+    var countEmp = 0;
+
+    for (String x in widget.map.keys) {
+      indicatorList.add(
+        PieIndicators(
+            textWidget: Text(
+              x,
+              style: const TextStyle(
+                fontSize: 12,
+                overflow: TextOverflow.clip,
+              ),
+            ),
+            color: empColor[countEmp]),
+      );
+      countEmp++;
+    }
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     int width = MediaQuery.of(context).size.width.toInt();
-    widget.chartList.clear();
+    sectionsData.clear();
     radius = width / 8;
-    var countNgo = 0;
 
+    var countNgo = 0;
     for (String x in widget.map.keys) {
       var sectionValue = (widget.map[x]!.toDouble() / widget.map.length) * 360;
       if (countNgo == touchedIndex) {
@@ -56,7 +83,7 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
       } else {
         radius = widget.smallRadius;
       }
-      widget.chartList.add(PieChartSectionData(
+      sectionsData.add(PieChartSectionData(
         color: widget.sectionColor[countNgo],
         showTitle: false,
         value: sectionValue,
@@ -112,7 +139,7 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
                           startDegreeOffset: 180,
                           borderData: FlBorderData(show: false),
                           sectionsSpace: 1,
-                          sections: widget.employmentStaDataList,
+                          sections: sectionsData,
                         ),
                       ),
                     ],
@@ -123,7 +150,7 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
                 flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.indicatorList,
+                  children: indicatorList,
                 ),
               ),
             ],
