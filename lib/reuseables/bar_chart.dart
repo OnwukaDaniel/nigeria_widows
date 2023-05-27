@@ -1,7 +1,8 @@
-import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+
+import '../models/HomePageData.dart';
 
 class CustomBarChart extends StatefulWidget {
   final FlTitlesData titlesData;
@@ -11,7 +12,7 @@ class CustomBarChart extends StatefulWidget {
   final double groupsSpace;
   final double smallWidth;
   final double largeWidth;
-  final Map<String, int> map;
+  final List<BaseLocalGovtData> map;
   final double typeMax;
 
   const CustomBarChart({
@@ -49,29 +50,27 @@ class _CustomBarChartState extends State<CustomBarChart> {
     legend.clear();
     barGroup.clear();
 
-    typeMax = widget.map.values.toList().reduce(max).toDouble();
-
     var count = 0;
-    for (String x in widget.map.keys) {
+    for (BaseLocalGovtData x in widget.map) {
       if (count == touchedIndex) {
         barWidth = widget.largeWidth;
       } else {
         barWidth = widget.smallWidth;
       }
-      barHeight= widget.map[x]!.toDouble();
+      barHeight= x.value.toDouble();
       BarChartRodData rod = BarChartRodData(
         width: barWidth,
-        toY: typeMax + 50,
+        toY: widget.typeMax + 50,
         rodStackItems: [
-          BarChartRodStackItem(0, widget.map[x]!.toDouble(), dark),
-          BarChartRodStackItem(barHeight, typeMax + 50, light),
+          BarChartRodStackItem(0, x.value.toDouble(), dark),
+          BarChartRodStackItem(barHeight, widget.typeMax + 50, light),
         ],
         borderRadius: BorderRadius.zero,
       );
       barGroup.add(
         BarChartGroupData(x: legend.length, barsSpace: 4, barRods: [rod]),
       );
-      legend.add(x);
+      legend.add(x.title);
       count++;
     }
 

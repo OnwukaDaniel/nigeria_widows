@@ -4,20 +4,16 @@ import 'package:nigerian_widows/repo/api_status.dart';
 import 'package:nigerian_widows/repo/user_service.dart';
 
 import '../sharednotifiers/app.dart';
-import '../util/app_constants.dart';
 
 class UsersViewModel extends ChangeNotifier {
   bool _loading = false;
   List<WidowData> _userListModel = [];
-  Failure _failure = Failure(code: AppConstants.NO_RESPONSE);
   int _pagesCount = 0;
   List<String> _pageIndexView = [];
 
   bool get loading => _loading;
 
   List<WidowData> get userListModel => _userListModel;
-
-  Failure get failure => _failure;
 
   int get pagesCount => _pagesCount;
 
@@ -34,10 +30,6 @@ class UsersViewModel extends ChangeNotifier {
 
   setUserListModel(List<WidowData> userList) {
     _userListModel = userList;
-  }
-
-  setFailure(Failure failure) {
-    _failure = failure;
   }
 
   setPagesCount(int pagesCount) {
@@ -105,10 +97,8 @@ class UsersViewModel extends ChangeNotifier {
   getUsers(int page) async {
     setLoading(true);
     var response = await UserServices.getUsers(page);
-    if (response is Success) {
+    if (response is APIResponse) {
       setUserListModel(response.response as List<WidowData>);
-    } else if (response is Failure) {
-      setFailure(failure);
     }
     setLoading(false);
   }
@@ -116,7 +106,7 @@ class UsersViewModel extends ChangeNotifier {
   getPageCount() async {
     setLoading(true);
     var response = await UserServices.getPageCount();
-    if (response is Success) {
+    if (response is APIResponse) {
       var list = {
         for (int i = 1; i < (response.response as int); i++)
           i > 3 ? "..." : i.toString()
@@ -125,8 +115,6 @@ class UsersViewModel extends ChangeNotifier {
       if (list.length > 3) list.add(">>");
       setPagesCount(response.response as int);
       _pageIndexView = list;
-    } else if (response is Failure) {
-      setFailure(failure);
     }
     setLoading(false);
   }

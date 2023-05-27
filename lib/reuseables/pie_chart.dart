@@ -1,7 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:nigerian_widows/reuseables/pie_indicators.dart';
 import 'package:nigerian_widows/reuseables/resuable_text.dart';
+
+import '../models/HomePageData.dart';
 
 class CustomPieGraph extends StatefulWidget {
   final CustomText legendText;
@@ -9,7 +12,7 @@ class CustomPieGraph extends StatefulWidget {
   final double centerSpaceRadius;
   final double smallRadius;
   final double largeRadius;
-  final Map<String, int> map;
+  final List<BaseLocalGovtData> map;
   final List<Color> sectionColor;
 
   const CustomPieGraph({
@@ -24,7 +27,7 @@ class CustomPieGraph extends StatefulWidget {
       text: '',
     ),
     this.centerSpaceRadius = 0.0,
-    this.map = const {},
+    this.map = const [],
   }) : super(key: key);
 
   @override
@@ -32,42 +35,26 @@ class CustomPieGraph extends StatefulWidget {
 }
 
 class _CustomPieGraphState extends State<CustomPieGraph> {
+  ValueNotifier<List<PieIndicators>> indicatorListVn = ValueNotifier([]);
   int touchedIndex = -1;
   double radius = 0;
   bool isTouched = false;
   List<PieChartSectionData> sectionsData = [];
   List<PieIndicators> indicatorList = [];
 
-  final List<Color> empColor = [
-    const Color(0xFF723EFF),
-    const Color(0xFFDC950A),
-    const Color(0xFF3EBFF6),
-    const Color(0xFFFDE567),
-    const Color(0xFF039CDD),
-    const Color(0xFF000000),
-  ];
+  @override
+  void dispose() {
+    indicatorListVn.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
-    var countEmp = 0;
-
-    for (String x in widget.map.keys) {
-      indicatorList.add(
-        PieIndicators(
-            textWidget: Text(
-              x,
-              style: const TextStyle(
-                fontSize: 12,
-                overflow: TextOverflow.clip,
-              ),
-            ),
-            color: empColor[countEmp]),
-      );
-      countEmp++;
-    }
+    SchedulerBinding.instance.addPostFrameCallback(
+      (timeStamp) => _getIndicators(),
+    );
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +63,8 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
     radius = width / 8;
 
     var countNgo = 0;
-    for (String x in widget.map.keys) {
-      var sectionValue = (widget.map[x]!.toDouble() / widget.map.length) * 360;
+    for (BaseLocalGovtData x in widget.map) {
+      var sectionValue = (x.value.toDouble() / widget.map.length) * 360;
       if (countNgo == touchedIndex) {
         radius = widget.largeRadius;
       } else {
@@ -88,10 +75,10 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
         showTitle: false,
         value: sectionValue,
         radius: radius,
-        titleStyle: const TextStyle(
+        titleStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Color(0xffffffff),
+          color: Theme.of(context).textTheme.bodyText1!.color,
         ),
       ));
       countNgo++;
@@ -104,7 +91,7 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          widget.legendText,
+          widget.legendText.text == ""? const SizedBox(): widget.legendText,
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,8 +99,7 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
               Expanded(
                 flex: 4,
                 child: SizedBox(
-                  width: width.toDouble(),
-                  height: 350,
+                  height: 220,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -146,17 +132,46 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: indicatorList,
-                ),
+              ValueListenableBuilder(
+                valueListenable: indicatorListVn,
+                builder: (_, List<PieIndicators> indicatorList, __) {
+                  if (indicatorList.isEmpty) {
+                    return const SizedBox();
+                  }
+                  return Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: indicatorList,
+                    ),
+                  );
+                },
               ),
             ],
           ),
         ],
       ),
     );
+  }
+
+  _getIndicators() {
+    var countEmp = 0;
+    for (BaseLocalGovtData x in widget.map) {
+      indicatorList.add(
+        PieIndicators(
+          textWidget: Text(
+            x.title,
+            style: TextStyle(
+              fontSize: 12,
+              overflow: TextOverflow.clip,
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
+          ),
+          color: widget.sectionColor[countEmp],
+        ),
+      );
+      countEmp++;
+    }
+    indicatorListVn.value = indicatorList;
   }
 }

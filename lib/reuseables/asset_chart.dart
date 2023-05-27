@@ -61,7 +61,7 @@ class AssetChat extends StatelessWidget {
               ),
               Positioned.fill(
                 child:
-                    Align(alignment: Alignment.bottomCenter, child: countText),
+                    Align(alignment: Alignment.center, child: countText),
               ),
               Image.asset(width: cw, height: ch, fit: BoxFit.fill, wavePath),
             ],

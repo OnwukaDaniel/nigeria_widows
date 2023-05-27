@@ -6,6 +6,7 @@ import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
 import 'package:nigerian_widows/theme/apptheme.dart';
+import 'package:nigerian_widows/viewmodel/chart_view_model.dart';
 import 'package:nigerian_widows/viewmodel/users_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    execute();
+    //execute();
     super.initState();
     getPref();
   }
@@ -73,6 +74,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => UsersViewModel()),
         ChangeNotifierProvider(create: (_) => PagingViewModel()),
         ChangeNotifierProvider(create: (_) => WidowJsonViewModel()),
+        ChangeNotifierProvider(create: (_) => ChartViewModel()),
       ],
       child: ValueListenableBuilder(
         valueListenable: AppNotifier.appTheme,

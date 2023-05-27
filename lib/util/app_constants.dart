@@ -1,5 +1,5 @@
 class AppConstants{
   static String appName = "Nigerian Widows";
-  static int NO_RESPONSE = 101;
-  static int SUCCESS = 200;
+  static const int FAILURE = 101;
+  static const int SUCCESS = 200;
 }

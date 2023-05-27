@@ -131,7 +131,7 @@ class _WidowsDataState extends State<WidowsData> {
       );
     } else {
       return Text(
-        usersViewModel.failure.errorResponse.toString(),
+        "Failure",
         style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
       );
     }

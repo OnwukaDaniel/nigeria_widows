@@ -208,7 +208,8 @@ class _HomeState extends State<Home> {
 
     for (String x in widowYearsMap.keys) {
       var len = widowYearsChartList.length;
-      widowYearsChartList.add(FlSpot((len + 2).toDouble(), widowYearsMap[x]!.toDouble()));
+      widowYearsChartList
+          .add(FlSpot((len + 2).toDouble(), widowYearsMap[x]!.toDouble()));
       widowYearsLegend.add(x);
     }
 
@@ -285,7 +286,6 @@ class _HomeState extends State<Home> {
       ),
     );
     lineChartDataVn.value = lineChartBarData;
-    final tooltipsOnBar = lineChartBarData[0];
 
     showIndexes
         .addAll([for (var i = 0; i <= widowYearsChartList.length - 1; i++) i]);
@@ -331,52 +331,6 @@ class _HomeState extends State<Home> {
       body: ListView(
         padding: const EdgeInsets.all(12.0),
         children: [
-          ValueListenableBuilder(
-            valueListenable: employmentMapVn,
-            builder: (context, Map<String, int> value, child) {
-              if (value.isEmpty) return const SizedBox();
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: CustomPieGraph(
-                  sectionColor: empColor,
-                  smallRadius: (w / 12),
-                  largeRadius: ((w / 12)) + 20.0,
-                  map: value,
-                  centerSpaceRadius: 60,
-                  centerText: CustomText(
-                    text: "WIDOWS\nEMPLOYMENT\n STATUS",
-                    padding: const EdgeInsets.only(right: 16, left: 16),
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyText1!.color,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          ValueListenableBuilder(
-            builder: (context, Map<String, int> value, child) {
-              if (value.isEmpty) return const SizedBox();
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: CustomPieGraph(
-                  sectionColor: ngoColor,
-                  smallRadius: w / 8 + 20,
-                  largeRadius: (w / 8) + 50,
-                  map: value,
-                  legendText: CustomText(
-                    text: "WIDOWS AFFILIATION TO NGO",
-                    padding:
-                        const EdgeInsets.only(top: 34, right: 16, left: 16),
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyText1!.color,
-                    ),
-                  ),
-                ),
-              );
-            },
-            valueListenable: ngoMapVn,
-          ),
           Material(
             elevation: 10,
             borderRadius: BorderRadius.circular(12.0),
@@ -400,6 +354,7 @@ class _HomeState extends State<Home> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18.0),
                       child: ValueListenableBuilder(
+                        valueListenable: lineChartDataVn,
                         builder:
                             (context, List<LineChartBarData> value, child) {
                           if (value.isEmpty) return const SizedBox();
@@ -465,7 +420,6 @@ class _HomeState extends State<Home> {
                             },
                           );
                         },
-                        valueListenable: lineChartDataVn,
                       ),
                     ),
                   ),
@@ -523,7 +477,7 @@ class _HomeState extends State<Home> {
                             typeMax: spouseBerMax,
                             smallWidth: 18,
                             largeWidth: 18 + 10,
-                            map: value,
+                            map: const [],
                             groupsSpace: 10,
                             gridData: FlGridData(
                               show: false,
@@ -572,7 +526,7 @@ class _HomeState extends State<Home> {
                             typeMax: occupationTypeMax,
                             smallWidth: 18,
                             largeWidth: 18 + 10,
-                            map: value,
+                            map: [],
                             groupsSpace: 10,
                             gridData: FlGridData(
                               show: false,
@@ -700,8 +654,9 @@ class _HomeState extends State<Home> {
             reservedSize: 65,
             getTitlesWidget: ((value, meta) {
               var style = TextStyle(
-                  color: Theme.of(context).textTheme.bodyText1!.color,
-                  fontSize: 8);
+                color: Theme.of(context).textTheme.bodyText1!.color,
+                fontSize: 8,
+              );
               return SideTitleWidget(
                 space: 4,
                 axisSide: meta.axisSide,
