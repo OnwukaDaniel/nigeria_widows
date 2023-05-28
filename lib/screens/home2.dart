@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:nigerian_widows/util/app_color.dart';
 import 'package:provider/provider.dart';
 
 import '../models/DataModel.dart';
@@ -108,16 +107,16 @@ computeOccupation(List<BaseLocalGovtData> value) async {
   return [values, legend];
 }
 
-class HomeTest extends StatefulWidget {
+class Home extends StatefulWidget {
   static const String id = "home";
 
-  const HomeTest({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
-  State<HomeTest> createState() => _HomeTestState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomeTestState extends State<HomeTest> {
+class _HomeState extends State<Home> {
   List<DataModel> data = [];
 
   execute() async {
@@ -141,15 +140,6 @@ class _HomeTestState extends State<HomeTest> {
   @override
   Widget build(BuildContext context) {
     ChartViewModel chartViewModel = context.watch<ChartViewModel>();
-    int width = MediaQuery.of(context).size.width.toInt();
-    int w = 360;
-    int h = 150;
-    double aspectRatio = w / h;
-    double rootAspectRatio = sqrt(aspectRatio);
-
-    double cw = width * rootAspectRatio;
-    double ch = cw / aspectRatio;
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: ValueListenableBuilder(
@@ -162,7 +152,7 @@ class _HomeTestState extends State<HomeTest> {
   }
 
   _ui(ChartViewModel chartViewModel, BuildContext context) {
-    int width = MediaQuery.of(context).size.width.toInt();
+    double width = MediaQuery.of(context).size.width;
     int w = 360;
     int h = 150;
     double aspectRatio = w / h;
@@ -172,7 +162,91 @@ class _HomeTestState extends State<HomeTest> {
     double ch = cw / aspectRatio;
 
     if (chartViewModel.loading) {
-      return SpinKitCubeGrid(color: AppColor.lightBlue, size: 200);
+      return ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        children: [
+          const SizedBox(height: kToolbarHeight + 13),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            color: Theme.of(context).cardColor,
+            margin: const EdgeInsets.symmetric(vertical: 16.0),
+            height: 200,
+            child: Center(
+              child: Text(
+                "Loading",
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
     } else {
       if (chartViewModel.success) {
         int widowsCount = chartViewModel.chartModel.data.widowsCount.count;
@@ -186,14 +260,12 @@ class _HomeTestState extends State<HomeTest> {
         var yearsInMarriageListData =
             chartViewModel.chartModel.data.yearsInMarriageData.data;
         var occupationData = chartViewModel.chartModel.data.occupationData.data;
-        int touchedIndex = -1;
-        print(
-            "HomePageData  ***** ${chartViewModel.chartModel.data.childrenData.data}");
 
         return ListView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.all(16),
           children: [
+            const SizedBox(height: kToolbarHeight + 13),
             AssetChat(
               legendText: CustomText(
                 text: "TOTAL NUMBER OF WIDOWS REGISTERED",
@@ -239,13 +311,15 @@ class _HomeTestState extends State<HomeTest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(
-                      text: "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyText1!.color,
-                      ),
+                    Padding(
                       padding:
-                          const EdgeInsets.only(top: 34, right: 12, left: 12),
+                          const EdgeInsets.only(top: 24, right: 12, left: 12),
+                      child: Text(
+                        "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                      ),
                     ),
                     FutureBuilder(
                       future: compute(computeLga, lgaList),
@@ -275,8 +349,9 @@ class _HomeTestState extends State<HomeTest> {
                                     axisSide: meta.axisSide,
                                     angle: 98.96,
                                     child: Text(
-                                        "${lgaLegend[value.toInt()]} - ",
-                                        style: style),
+                                      "${lgaLegend[value.toInt()]} - ",
+                                      style: style,
+                                    ),
                                   );
                                 },
                               ),
@@ -284,26 +359,22 @@ class _HomeTestState extends State<HomeTest> {
                             rightTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
-                                reservedSize: 40,
+                                reservedSize: 50,
                                 interval: 200,
                                 getTitlesWidget:
                                     (double value, TitleMeta meta) {
                                   const style = TextStyle(
                                       color: Color(0xff939393), fontSize: 10);
                                   return SideTitleWidget(
-                                    angle: 98.96,
+                                    angle: 0,
                                     space: 15,
                                     axisSide: meta.axisSide,
                                     child: Column(
                                       children: [
-                                        const RotatedBox(
-                                          quarterTurns: 1,
-                                          child: Text(
-                                            "-",
-                                            style: style,
-                                          ),
+                                        Text(
+                                          " - ${meta.formattedValue}",
+                                          style: style,
                                         ),
-                                        Text(meta.formattedValue, style: style),
                                       ],
                                     ),
                                   );
@@ -359,7 +430,6 @@ class _HomeTestState extends State<HomeTest> {
                                       if (!event.isInterestedForInteractions ||
                                           barTouchResponse == null ||
                                           barTouchResponse.spot == null) {
-
                                         return;
                                       }
                                     },
@@ -552,7 +622,10 @@ class _HomeTestState extends State<HomeTest> {
                           CustomText(
                             text: "NUMBER OF CHILDREN",
                             padding: const EdgeInsets.only(
-                                right: 16, left: 16, top: 20),
+                              right: 16,
+                              left: 16,
+                              top: 20,
+                            ),
                             style: TextStyle(
                               color:
                                   Theme.of(context).textTheme.bodyText1!.color,
@@ -595,12 +668,9 @@ class _HomeTestState extends State<HomeTest> {
                                       return lineBarsSpot.map((lineBarSpot) {
                                         return LineTooltipItem(
                                           lineBarSpot.y.toInt().toString(),
-                                          TextStyle(
+                                          const TextStyle(
                                             fontSize: 12,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1!
-                                                .color,
+                                            color: Colors.white,
                                           ),
                                         );
                                       }).toList();

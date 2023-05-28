@@ -7,6 +7,7 @@ class AppNotifier{
   static ValueNotifier<ThemeData> appTheme = ValueNotifier(AppTheme.darkTheme);
   static ValueNotifier<int> selectedPageVn = ValueNotifier(1);
   static ValueNotifier<List<DataModel>> jsonDataModelVN = ValueNotifier([]);
-  static ValueNotifier<List<BarChartGroupData>> lgaGroupDataVn = ValueNotifier([]);
+  static ValueNotifier<List<BarChartGroupData>> lgaGroupDataVn =
+  ValueNotifier([]);
 }
 

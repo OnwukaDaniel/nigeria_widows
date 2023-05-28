@@ -32,6 +32,7 @@ flutter:
     - assets/
     - assets/icons/
     - assets/splash/
+    - assets/widow_images/
 
   fonts:
     - family: Rubik

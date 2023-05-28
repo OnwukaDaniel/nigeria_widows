@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -6,7 +8,7 @@ import 'package:nigerian_widows/viewmodel/users_view_model.dart';
 import "package:provider/provider.dart";
 
 import '../sharednotifiers/app.dart';
-import 'WidowProfile.dart';
+import '../viewmodel/widows_model.dart';
 
 class WidowsData extends StatefulWidget {
   static const String id = "WidowsData";
@@ -18,6 +20,7 @@ class WidowsData extends StatefulWidget {
 }
 
 class _WidowsDataState extends State<WidowsData> {
+  double bottomBarHeight = 60;
 
   @override
   void initState() {
@@ -30,219 +33,254 @@ class _WidowsDataState extends State<WidowsData> {
   @override
   Widget build(BuildContext context) {
     UsersViewModel usersViewModel = context.watch<UsersViewModel>();
+    WidowsViewModel widowsViewModel = context.watch<WidowsViewModel>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(
-          "Widows Data",
-          style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        physics: const BouncingScrollPhysics(),
+      body: Stack(
         children: [
-          _ui(usersViewModel),
-          const SizedBox(height: 16),
-          _bottomPageView(usersViewModel),
+          ListView(
+            padding: const EdgeInsets.all(8),
+            physics: const BouncingScrollPhysics(),
+            children: [
+              const SizedBox(height: 16),
+              _ui2(widowsViewModel),
+              SizedBox(height: bottomBarHeight),
+            ],
+          ),
+          _bottomPageView(widowsViewModel),
         ],
       ),
     );
   }
 
-  _ui(UsersViewModel usersViewModel) {
-    if (usersViewModel.loading) {
-      return SpinKitFadingCube(color: AppColor.appColor, size: 50);
-    } else if (usersViewModel.userListModel.isNotEmpty) {
-      return GridView.builder(
-        physics: const BouncingScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: context.watch<UsersViewModel>().userListModel.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          mainAxisExtent: 238,
+  _ui2(WidowsViewModel widowsViewModel) {
+    if (widowsViewModel.loading) {
+      return Center(
+        child: SpinKitCubeGrid(
+          color: AppColor.appColor.withOpacity(0.5),
+          size: 100,
         ),
-        itemBuilder: (BuildContext context, int index) {
-          var data = context.watch<UsersViewModel>().userListModel[index];
-          double font = 9;
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Image.asset(
-                  "assets/splash/african_woman.png",
-                  height: 120,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 4),
-                DetailItem(data1: "Name ", data2: data.name),
-                const SizedBox(height: 4),
-                DetailItem(data1: "Date of birth ", data2: data.dob),
-                const SizedBox(height: 4),
-                DetailItem(data1: "Address ", data2: data.address),
-                const SizedBox(height: 4),
-                DetailItem(data1: "Phone ", data2: data.phone),
-                const SizedBox(height: 4),
-                DetailItem(data1: "State ", data2: data.state),
-                const Spacer(),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) {
-                          return WidowProfile(data: data);
-                        },
-                      ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "View details ",
-                        style: TextStyle(
-                          fontSize: font + 1,
-                          color: AppColor.appColor,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: AppColor.appColor,
-                        size: 14,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          );
-        },
       );
     } else {
-      return Text(
-        "Failure",
-        style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
-      );
-    }
-  }
+      if (widowsViewModel.success) {
+        return GridView.builder(
+          physics: const BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: widowsViewModel.specificPageData.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            mainAxisExtent: 238,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            double font = 9;
+            int countPerPage = widowsViewModel.countPerPage;
+            int pageNumber = widowsViewModel.pagesCount;
+            var data = widowsViewModel.specificPageData[index];
 
-  _bottomPageView(UsersViewModel usersViewModel) {
-    var value = usersViewModel.pageIndexView;
-    if (usersViewModel.pageIndexView.isEmpty) value = ["1"];
-    return Center(
-      child: SizedBox(
-        height: 50,
-        child: ValueListenableBuilder(
-          valueListenable: AppNotifier.selectedPageVn,
-          builder: (_, int selectedPage, Widget? child) {
-            return ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: value.length,
-              itemBuilder: (BuildContext context, int index) {
-                var s = value[index];
-                double boxDim = 50;
-                double borderDim = 10;
-                var boxDecoration = const BoxDecoration();
-                var g = const BorderSide(color: Colors.grey);
-                var border = Border(top: g, bottom: g, right: g, left: g);
+            var img =
+                "assets/widow_images/profile${(pageNumber - 1) * countPerPage + index}.png";
 
-                if (s == value.first) {
-                  boxDecoration = BoxDecoration(
-                    border: border,
-                    color: selectedPage.toString() == s
-                        ? AppColor.appColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(borderDim),
-                      bottomLeft: Radius.circular(borderDim),
-                      bottomRight: value.length == 1
-                          ? Radius.circular(borderDim)
-                          : const Radius.circular(0),
-                      topRight: value.length == 1
-                          ? Radius.circular(borderDim)
-                          : const Radius.circular(0),
-                    ),
-                  );
-                } else if (s == value.last) {
-                  boxDecoration = BoxDecoration(
-                    border: border,
-                    color: selectedPage.toString() == s
-                        ? AppColor.appColor
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(0),
-                      bottomLeft: const Radius.circular(0),
-                      bottomRight: Radius.circular(borderDim),
-                      topRight: Radius.circular(borderDim),
-                    ),
-                  );
-                } else {
-                  boxDecoration = BoxDecoration(
-                    border: border,
-                    color: selectedPage.toString() == s
-                        ? AppColor.appColor
-                        : Colors.transparent,
-                  );
-                }
-
-                return GestureDetector(
-                  onTap: () {
-                    context.read<UsersViewModel>().setPageIndex(value[index]);
-                  },
-                  child: Container(
-                    width: boxDim,
-                    height: boxDim,
-                    decoration: boxDecoration,
-                    child: Center(
-                      child: Text(
-                        s,
-                        style: TextStyle(
-                          color: selectedPage.toString() == s
-                              ? Colors.white
-                              : Theme.of(context).textTheme.bodyText1!.color,
+            return Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Image.asset(
+                    img,
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 4),
+                  DetailItem(data1: "Name ", data2: data.fullName!),
+                  const SizedBox(height: 4),
+                  DetailItem(data1: "Date of birth ", data2: data.dob!),
+                  const SizedBox(height: 4),
+                  DetailItem(data1: "Address ", data2: data.address!),
+                  const SizedBox(height: 4),
+                  DetailItem(data1: "Phone ", data2: data.phoneNumber!),
+                  const SizedBox(height: 4),
+                  DetailItem(data1: "State ", data2: data.state!),
+                  const Spacer(),
+                  InkWell(
+                    onTap: () {
+                      //Navigator.push(
+                      //  context,
+                      //  MaterialPageRoute(
+                      //    builder: (_) {
+                      //      return WidowProfile(data: data);
+                      //    },
+                      //  ),
+                      //);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "View details ",
+                          style: TextStyle(
+                            fontSize: font + 1,
+                            color: AppColor.appColor,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColor.appColor,
+                          size: 14,
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
+                  const SizedBox(height: 8),
+                ],
+              ),
             );
           },
+        );
+      } else {
+        return Text(
+          "Failure",
+          style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
+        );
+      }
+    }
+    return SizedBox();
+  }
+
+  _bottomPageView(WidowsViewModel widowsViewModel) {
+    var value = widowsViewModel.pageIndexView;
+    if (widowsViewModel.pageIndexView.isEmpty) value = ["1"];
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(32),
+          ),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                height: bottomBarHeight,
+                child: ValueListenableBuilder(
+                  valueListenable: AppNotifier.selectedPageVn,
+                  builder: (_, int selectedPage, Widget? child) {
+                    return ListView.builder(
+                      primary: true,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: value.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        var s = value[index];
+                        double boxDim = 50;
+                        double borderDim = 10;
+                        var boxDecoration = const BoxDecoration();
+                        var g = const BorderSide(color: Colors.grey);
+                        var border = Border(top: g, bottom: g, right: g, left: g);
+
+                        if (s == value.first) {
+                          boxDecoration = BoxDecoration(
+                            border: border,
+                            color: selectedPage.toString() == s
+                                ? AppColor.appColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(borderDim),
+                              bottomLeft: Radius.circular(borderDim),
+                              bottomRight: value.length == 1
+                                  ? Radius.circular(borderDim)
+                                  : const Radius.circular(0),
+                              topRight: value.length == 1
+                                  ? Radius.circular(borderDim)
+                                  : const Radius.circular(0),
+                            ),
+                          );
+                        } else if (s == value.last) {
+                          boxDecoration = BoxDecoration(
+                            border: border,
+                            color: selectedPage.toString() == s
+                                ? AppColor.appColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(0),
+                              bottomLeft: const Radius.circular(0),
+                              bottomRight: Radius.circular(borderDim),
+                              topRight: Radius.circular(borderDim),
+                            ),
+                          );
+                        } else {
+                          boxDecoration = BoxDecoration(
+                            border: border,
+                            color: selectedPage.toString() == s
+                                ? AppColor.appColor
+                                : Colors.transparent,
+                          );
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            context
+                                .read<UsersViewModel>()
+                                .setPageIndex(value[index]);
+                          },
+                          child: Container(
+                            width: boxDim,
+                            height: boxDim,
+                            decoration: boxDecoration,
+                            child: Center(
+                              child: Text(
+                                s,
+                                style: TextStyle(
+                                  color: selectedPage.toString() == s
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
 
 class DetailItem extends StatelessWidget {
-
   const DetailItem({
     Key? key,
     required this.data1,
     required this.data2,
+    this.isName = false,
   }) : super(key: key);
 
+  final bool isName;
   final String data1;
   final String data2;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
             data1,
@@ -252,11 +290,16 @@ class DetailItem extends StatelessWidget {
               color: Theme.of(context).textTheme.bodyText1!.color,
             ),
           ),
-          Text(
-            data2,
-            style: TextStyle(
-              fontSize: 9,
-              color: Theme.of(context).textTheme.bodyText1!.color,
+          const SizedBox(width: 32),
+          Expanded(
+            child: Text(
+              data2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 9,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
             ),
           ),
         ],

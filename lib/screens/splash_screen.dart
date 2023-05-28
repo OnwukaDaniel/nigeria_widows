@@ -1,8 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
-import 'home.dart';
 import 'landing.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,7 +12,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Timer(const Duration(seconds: 3), () async {
+    Timer(
+      const Duration(seconds: 3),
+      () async {
         Navigator.of(context).pushReplacementNamed(Landing.id);
       },
     );
@@ -24,8 +23,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    int width = MediaQuery.of(context).size.width.toInt();
-
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Center(

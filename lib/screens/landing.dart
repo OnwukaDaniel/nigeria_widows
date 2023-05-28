@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/home2.dart';
 import 'package:nigerian_widows/screens/settings.dart';
 import 'package:nigerian_widows/util/app_color.dart';
@@ -23,9 +23,10 @@ class Landing extends StatefulWidget {
 class _LandingState extends State<Landing> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   ValueNotifier<int> selectedVN = ValueNotifier(0);
+  int backStackCount = 0;
 
   List<Widget> fragments = [
-    const HomeTest(),
+    const Home(),
     const WidowsData(),
     const Settings(),
   ];
@@ -36,148 +37,192 @@ class _LandingState extends State<Landing> {
 
     return ValueListenableBuilder(
       valueListenable: AppNotifier.appTheme,
-      builder: (_, ThemeData value, Widget? child) {
-        return MaterialApp(
-          color: Theme.of(context).backgroundColor,
-          debugShowCheckedModeBanner: false,
-          theme: value,
-          home: Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
-            key: _scaffoldKey,
-            appBar: AppBar(
+      builder: (_, ThemeData theme, Widget? child) {
+        return WillPopScope(
+          onWillPop: () {
+            if (backStackCount == 0) {
+              selectedVN.value = 0;
+              return Future<bool>.value(true);
+            } else {
+              backStackCount = 0;
+              selectedVN.value = 0;
+              return Future<bool>.value(false);
+            }
+          },
+          child: MaterialApp(
+            color: Theme.of(context).backgroundColor,
+            debugShowCheckedModeBanner: false,
+            theme: theme,
+            home: Scaffold(
+              extendBodyBehindAppBar: true,
               backgroundColor: Theme.of(context).backgroundColor,
-              elevation: 0,
-              leading: InkWell(
-                onTap: () {
-                  _scaffoldKey.currentState!.openDrawer();
-                },
-                child: Icon(
-                  Icons.menu,
-                  color: Theme.of(context).textTheme.bodyText1!.color,
-                ),
-              ),
-              title: Text(
-                AppConstants.appName,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.bodyText1!.color,
-                ),
-              ),
-            ),
-            body: ValueListenableBuilder(
-              valueListenable: selectedVN,
-              builder: (__, int value, Widget? child) {
-                return fragments[value];
-              },
-            ),
-            drawer: Drawer(
-              backgroundColor: Theme.of(context).cardColor,
-              width: width / 1.2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: CircleAvatar(
-                      radius: 40,
-                      child: Icon(Icons.person, size: 40),
-                    ),
+              key: _scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size(double.infinity, kToolbarHeight),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    bottom: Radius.circular(32),
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      AppConstants.appName,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyText1!.color,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: AppBar(
+                      backgroundColor:
+                          Theme.of(context).backgroundColor.withOpacity(0.1),
+                      elevation: 0,
+                      leading: InkWell(
+                        onTap: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                        child: Icon(
+                          Icons.menu,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
+                      ),
+                      title: Text(
+                        AppConstants.appName,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
+                        ),
                       ),
                     ),
                   ),
-                  const Divider(),
-                  ValueListenableBuilder(
-                    valueListenable: selectedVN,
-                    builder: (_, int value, Widget? child) {
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _scaffoldKey.currentState!.closeDrawer();
-                              selectedVN.value = 0;
-                            },
-                            child: DrawerItem(
-                              text: "Home",
-                              color: value == 0
-                                  ? AppColor.appColor
-                                  : Colors.transparent,
-                              icon: Icons.home,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _scaffoldKey.currentState!.closeDrawer();
-                              selectedVN.value = 1;
-                              //Navigator.pushNamed(context, WidowsData.id);
-                            },
-                            child: DrawerItem(
-                              text: "Widows Data",
-                              color: value == 1
-                                  ? AppColor.appColor
-                                  : Colors.transparent,
-                              icon: Icons.person,
-                            ),
-                          ),
-                          const Divider(),
-                          GestureDetector(
-                            onTap: () {
-                              _scaffoldKey.currentState!.closeDrawer();
-                              selectedVN.value = 2;
-                            },
-                            child: DrawerItem(
-                              text: "Settings",
-                              color: value == 2
-                                  ? AppColor.appColor
-                                  : Colors.transparent,
-                              icon: Icons.settings_sharp,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const Spacer(),
-                  InkWell(
-                    onTap: () {
-                      _scaffoldKey.currentState!.closeDrawer();
-                      exit(0);
-                    },
-                    child: Row(
+                ),
+              ),
+              body: ValueListenableBuilder(
+                valueListenable: selectedVN,
+                builder: (__, int value, Widget? child) {
+                  return fragments[value];
+                },
+              ),
+              drawer: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(32),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Drawer(
+                    backgroundColor:
+                        Theme.of(context).cardColor.withOpacity(0.7),
+                    width: width / 1.2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: kToolbarHeight / 2),
+                        const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircleAvatar(
+                            radius: 40,
+                            child: Icon(Icons.person, size: 40),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: RotatedBox(
-                            quarterTurns: 2,
-                            child: Icon(
-                              Icons.exit_to_app,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            AppConstants.appName,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               color:
                                   Theme.of(context).textTheme.bodyText1!.color,
                             ),
                           ),
                         ),
-                        CustomText(
-                          padding: const EdgeInsets.all(16),
-                          text: "Exit app",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).textTheme.bodyText1!.color,
+                        const Divider(),
+                        ValueListenableBuilder(
+                          valueListenable: selectedVN,
+                          builder: (_, int value, Widget? child) {
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    _scaffoldKey.currentState!.closeDrawer();
+                                    selectedVN.value = 0;
+                                    backStackCount = 0;
+                                  },
+                                  child: DrawerItem(
+                                    text: "Home",
+                                    color: value == 0
+                                        ? AppColor.appColor
+                                        : Colors.transparent,
+                                    icon: Icons.home,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    _scaffoldKey.currentState!.closeDrawer();
+                                    selectedVN.value = 1;
+                                    backStackCount = 1;
+                                  },
+                                  child: DrawerItem(
+                                    text: "Widows Data",
+                                    color: value == 1
+                                        ? AppColor.appColor
+                                        : Colors.transparent,
+                                    icon: Icons.person,
+                                  ),
+                                ),
+                                const Divider(),
+                                GestureDetector(
+                                  onTap: () {
+                                    _scaffoldKey.currentState!.closeDrawer();
+                                    selectedVN.value = 2;
+                                    backStackCount = 1;
+                                  },
+                                  child: DrawerItem(
+                                    text: "Settings",
+                                    color: value == 2
+                                        ? AppColor.appColor
+                                        : Colors.transparent,
+                                    icon: Icons.settings_sharp,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const Spacer(),
+                        InkWell(
+                          onTap: () {
+                            _scaffoldKey.currentState!.closeDrawer();
+                            backStackCount = 0;
+                            exit(0);
+                          },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: RotatedBox(
+                                  quarterTurns: 2,
+                                  child: Icon(
+                                    Icons.exit_to_app,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color,
+                                  ),
+                                ),
+                              ),
+                              CustomText(
+                                padding: const EdgeInsets.all(16),
+                                text: "Exit app",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -222,7 +267,9 @@ class DrawerItem extends StatelessWidget {
                 text: text,
                 style: TextStyle(
                   fontSize: 14,
-                  color: color == Colors.transparent ? Theme.of(context).textTheme.bodyText1!.color : Colors.white,
+                  color: color == Colors.transparent
+                      ? Theme.of(context).textTheme.bodyText1!.color
+                      : Colors.white,
                 ),
               ),
             ],

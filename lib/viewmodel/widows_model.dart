@@ -1,27 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:nigerian_widows/models/WidowsData.dart';
 import 'package:nigerian_widows/repo/api_status.dart';
 import 'package:nigerian_widows/repo/user_service.dart';
 
 import '../models/WidowData.dart';
 import '../sharednotifiers/app.dart';
+import '../util/app_constants.dart';
 
-class UsersViewModel extends ChangeNotifier {
+class WidowsViewModel extends ChangeNotifier {
   bool _loading = false;
-  List<WidowData> _userListModel = [];
+  WidowData _widowModel = WidowData();
+  bool _success = false;
   int _pagesCount = 0;
+  int countPerPage = 6;
   List<String> _pageIndexView = [];
+
+  List<Data> _specificPageData = [];
 
   bool get loading => _loading;
 
-  List<WidowData> get userListModel => _userListModel;
+  WidowData get widowModel => _widowModel;
+
+  bool get success => _success;
 
   int get pagesCount => _pagesCount;
 
+  List<Data> get specificPageData => _specificPageData;
+
   List<String> get pageIndexView => _pageIndexView;
 
-  UsersViewModel() {
-    getUsers(0);
+  WidowsViewModel() {
+    getWidowsData();
   }
 
   setLoading(bool loading) async {
@@ -29,29 +39,60 @@ class UsersViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  setUserListModel(List<WidowData> userList) {
-    _userListModel = userList;
+  setChatDataModel(WidowData input) {
+    _widowModel = input;
   }
 
-  setPagesCount(int pagesCount) {
-    _pagesCount = pagesCount;
+  setSuccess(bool success) {
+    _success = success;
+  }
+
+  setPages(int input) {
+    _pagesCount = input;
+  }
+
+  getWidowsData() async {
+    setLoading(true);
+    var response = await UserServices.getWidowsData() as APIResponse;
+    if (response.code == AppConstants.SUCCESS) {
+      WidowData data = WidowData.fromJson(jsonDecode(response.response));
+      _widowModel = data;
+      var pageCount = ((data.lastIndex! + 1) / countPerPage).round();
+      print("Page cout ******************* $pageCount");
+      if (pageCount >= 1) {
+        setPages(pageCount.toInt());
+        var list = {
+          for (int i = 1; i < _pagesCount; i++) i > 3 ? "..." : i.toString()
+        }.toList();
+        if (list.length > 3) list.add(">>");
+        _pageIndexView = list;
+      } else {
+        setPages(1);
+      }
+      getPageData(1);
+      setLoading(false);
+      setSuccess(true);
+    } else {
+      setLoading(false);
+      setSuccess(false);
+    }
   }
 
   setPageIndex(String p) {
     try {
       _formatPageIndex(int.parse(p));
     } catch (e) {
-      if(p == "<<"){
+      if (p == "<<") {
         _formatPageIndex(AppNotifier.selectedPageVn.value - 1);
       }
-      if(p == ">>"){
+      if (p == ">>") {
         _formatPageIndex(AppNotifier.selectedPageVn.value + 1);
       }
     }
     notifyListeners();
   }
 
-  _formatPageIndex(int pagesCurrent){
+  _formatPageIndex(int pagesCurrent) {
     var first = pagesCurrent - 1;
     var second = pagesCurrent + 1;
     if (pagesCurrent == 1) {
@@ -92,26 +133,15 @@ class UsersViewModel extends ChangeNotifier {
       _pageIndexView = list;
     }
     AppNotifier.selectedPageVn.value = pagesCurrent;
-    getUsers(pagesCurrent);
+    getPageData(pagesCurrent);
   }
 
-  getUsers(int page) async {
-    setLoading(true);
-    var response = await UserServices.getUsers(page);
-    if (response is APIResponse) {
-      setUserListModel(response.response as List<WidowData>);
+  getPageData(int input) {
+    if (_pagesCount != 0) {
+      _specificPageData = _widowModel.data!.sublist(
+        (input - 1) * countPerPage,
+        input * countPerPage,
+      );
     }
-    setLoading(false);
-  }
-
-  getPageCount() async {
-    var list = {
-      for (int i = 1; i < _pagesCount; i++)
-        i > 3 ? "..." : i.toString()
-    }.toList();
-
-    if (list.length > 3) list.add(">>");
-    setPagesCount(_pagesCount);
-    _pageIndexView = list;
   }
 }
