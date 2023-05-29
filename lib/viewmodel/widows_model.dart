@@ -13,6 +13,7 @@ class WidowsViewModel extends ChangeNotifier {
   WidowData _widowModel = WidowData();
   bool _success = false;
   int _pagesCount = 0;
+  int _pagesCurrent = 1;
   int countPerPage = 6;
   List<String> _pageIndexView = [];
 
@@ -25,6 +26,8 @@ class WidowsViewModel extends ChangeNotifier {
   bool get success => _success;
 
   int get pagesCount => _pagesCount;
+
+  int get pagesCurrent => _pagesCurrent;
 
   List<Data> get specificPageData => _specificPageData;
 
@@ -58,11 +61,10 @@ class WidowsViewModel extends ChangeNotifier {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _widowModel = data;
       var pageCount = ((data.lastIndex! + 1) / countPerPage).round();
-      print("Page cout ******************* $pageCount");
       if (pageCount >= 1) {
         setPages(pageCount.toInt());
         var list = {
-          for (int i = 1; i < _pagesCount; i++) i > 3 ? "..." : i.toString()
+          for (int i = 1; i <= pageCount; i++) i > 3 ? "..." : i.toString()
         }.toList();
         if (list.length > 3) list.add(">>");
         _pageIndexView = list;
@@ -97,7 +99,7 @@ class WidowsViewModel extends ChangeNotifier {
     var second = pagesCurrent + 1;
     if (pagesCurrent == 1) {
       var list = {
-        for (int i = 1; i < _pagesCount; i++) i > 3 ? "..." : i.toString()
+        for (int i = 1; i <= _pagesCount; i++) i > 3 ? "..." : i.toString()
       }.toList();
       if (list.length > 3) list.add(">>");
       _pageIndexView = list;
@@ -138,6 +140,7 @@ class WidowsViewModel extends ChangeNotifier {
 
   getPageData(int input) {
     if (_pagesCount != 0) {
+      _pagesCurrent = input;
       _specificPageData = _widowModel.data!.sublist(
         (input - 1) * countPerPage,
         input * countPerPage,

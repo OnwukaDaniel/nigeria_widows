@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nigerian_widows/screens/home2.dart';
+import 'package:nigerian_widows/screens/settings/homepage_background.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
 import 'package:nigerian_widows/theme/apptheme.dart';
@@ -90,6 +91,7 @@ class _MyAppState extends State<MyApp> {
               Settings.id: (ctx) => const Settings(),
               Landing.id: (ctx) => const Landing(),
               WidowsData.id: (ctx) => const WidowsData(),
+              HomePageBackground.id: (ctx) => const HomePageBackground(),
             },
           );
         },

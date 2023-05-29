@@ -17,6 +17,7 @@ dependencies:
   provider: ^6.0.5
   http: ^0.13.5
   async_task: ^1.0.14
+  particles_flutter: ^0.1.4
 
 dev_dependencies:
   flutter_test:

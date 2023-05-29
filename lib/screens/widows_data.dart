@@ -9,6 +9,7 @@ import "package:provider/provider.dart";
 
 import '../sharednotifiers/app.dart';
 import '../viewmodel/widows_model.dart';
+import 'WidowProfile.dart';
 
 class WidowsData extends StatefulWidget {
   static const String id = "WidowsData";
@@ -24,8 +25,8 @@ class _WidowsDataState extends State<WidowsData> {
 
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      context.read<UsersViewModel>().getPageCount();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      AppNotifier.toolbarTitleVn.value = "Widow's data";
     });
     super.initState();
   }
@@ -67,7 +68,7 @@ class _WidowsDataState extends State<WidowsData> {
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
-          itemCount: widowsViewModel.specificPageData.length,
+          itemCount: context.read<WidowsViewModel>().specificPageData.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 4,
@@ -76,12 +77,12 @@ class _WidowsDataState extends State<WidowsData> {
           ),
           itemBuilder: (BuildContext context, int index) {
             double font = 9;
-            int countPerPage = widowsViewModel.countPerPage;
-            int pageNumber = widowsViewModel.pagesCount;
-            var data = widowsViewModel.specificPageData[index];
+            int countPerPage = context.read<WidowsViewModel>().countPerPage;
+            int pageNumber = context.read<WidowsViewModel>().pagesCurrent;
+            var data = context.read<WidowsViewModel>().specificPageData[index];
 
             var img =
-                "assets/widow_images/profile${(pageNumber - 1) * countPerPage + index}.png";
+                "assets/widow_images/profile${(pageNumber - 1) * countPerPage + index + 1}.png";
 
             return Container(
               clipBehavior: Clip.hardEdge,
@@ -110,14 +111,14 @@ class _WidowsDataState extends State<WidowsData> {
                   const Spacer(),
                   InkWell(
                     onTap: () {
-                      //Navigator.push(
-                      //  context,
-                      //  MaterialPageRoute(
-                      //    builder: (_) {
-                      //      return WidowProfile(data: data);
-                      //    },
-                      //  ),
-                      //);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) {
+                            return WidowProfile(data: data, image: img);
+                          },
+                        ),
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -184,7 +185,8 @@ class _WidowsDataState extends State<WidowsData> {
                         double borderDim = 10;
                         var boxDecoration = const BoxDecoration();
                         var g = const BorderSide(color: Colors.grey);
-                        var border = Border(top: g, bottom: g, right: g, left: g);
+                        var border =
+                            Border(top: g, bottom: g, right: g, left: g);
 
                         if (s == value.first) {
                           boxDecoration = BoxDecoration(
@@ -228,7 +230,7 @@ class _WidowsDataState extends State<WidowsData> {
                         return GestureDetector(
                           onTap: () {
                             context
-                                .read<UsersViewModel>()
+                                .read<WidowsViewModel>()
                                 .setPageIndex(value[index]);
                           },
                           child: Container(

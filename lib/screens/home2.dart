@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -135,6 +136,14 @@ class _HomeState extends State<Home> {
           .split(" ");
       return bList.last.compareTo(aList.last);
     });
+  }
+
+  @override
+  void initState() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      AppNotifier.toolbarTitleVn.value = "Nigerian Widows";
+    });
+    super.initState();
   }
 
   @override

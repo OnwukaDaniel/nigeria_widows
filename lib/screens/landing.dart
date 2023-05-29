@@ -78,13 +78,18 @@ class _LandingState extends State<Landing> {
                           color: Theme.of(context).textTheme.bodyText1!.color,
                         ),
                       ),
-                      title: Text(
-                        AppConstants.appName,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyText1!.color,
-                        ),
+                      title: ValueListenableBuilder(
+                        valueListenable: AppNotifier.toolbarTitleVn,
+                        builder: (_, String value, Widget? child) {
+                          return Text(
+                            value,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).textTheme.bodyText1!.color,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

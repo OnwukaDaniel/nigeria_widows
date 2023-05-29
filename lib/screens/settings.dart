@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:nigerian_widows/util/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../sharednotifiers/app.dart';
 import '../theme/apptheme.dart';
+import 'settings/homepage_background.dart';
 
 class Settings extends StatefulWidget {
   static const String id = "Settings";
@@ -15,21 +17,21 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  @override
+  void initState() {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      AppNotifier.toolbarTitleVn.value = "Setting";
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(
-          "Settings",
-          style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
@@ -74,6 +76,71 @@ class _SettingsState extends State<Settings> {
               ],
             ),
             const Divider(),
+            const SizedBox(height: 8),
+            Text(
+              "Change app background",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+            BackgroundChangeCard(
+              text: "Homepage background",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const HomePageBackground(),
+                  ),
+                );
+              },
+            ),
+            BackgroundChangeCard(
+              text: "Widow's Page",
+              onTap: () {},
+            ),
+            const SizedBox(height: 16),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundChangeCard extends StatelessWidget {
+  final String text;
+  final Function() onTap;
+
+  const BackgroundChangeCard({
+    Key? key,
+    required this.text,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                fontSize: 18,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: Theme.of(context).textTheme.bodyText1!.color,
+            ),
           ],
         ),
       ),
