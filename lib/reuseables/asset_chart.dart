@@ -1,7 +1,10 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:nigerian_widows/reuseables/resuable_text.dart';
+
+import '../sharednotifiers/app.dart';
 
 class AssetChat extends StatelessWidget {
   final CustomText legendText;
@@ -34,37 +37,51 @@ class AssetChat extends StatelessWidget {
       height: ch,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Material(
-          elevation: 10,
-          color: Theme.of(context).cardColor,
-          clipBehavior: Clip.hardEdge,
-          borderRadius: BorderRadius.circular(18.0),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(22.0),
-                child: legendText,
-              ),
-              Positioned.fill(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(22.0),
-                    child: Image.asset(
-                      width: 25,
-                      height: 20,
-                      fit: BoxFit.fill,
-                      iconPath,
-                    ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: ValueListenableBuilder(
+              valueListenable: AppNotifier.backgroundPrefDataVn,
+              builder: (BuildContext context, String value, Widget? child) {
+                return Material(
+                  elevation: 10,
+                  color: Theme.of(context).cardColor.withOpacity(
+                        value != "" ? .3 : 1,
+                      ),
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.circular(18.0),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(22.0),
+                        child: legendText,
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(22.0),
+                            child: Image.asset(
+                              width: 25,
+                              height: 20,
+                              fit: BoxFit.fill,
+                              iconPath,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: Align(
+                            alignment: Alignment.center, child: countText),
+                      ),
+                      Image.asset(
+                          width: cw, height: ch, fit: BoxFit.fill, wavePath),
+                    ],
                   ),
-                ),
-              ),
-              Positioned.fill(
-                child:
-                    Align(alignment: Alignment.center, child: countText),
-              ),
-              Image.asset(width: cw, height: ch, fit: BoxFit.fill, wavePath),
-            ],
+                );
+              },
+            ),
           ),
         ),
       ),

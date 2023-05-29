@@ -18,6 +18,8 @@ dependencies:
   http: ^0.13.5
   async_task: ^1.0.14
   particles_flutter: ^0.1.4
+  particle_field: ^1.0.0
+  rnd: ^0.2.0
 
 dev_dependencies:
   flutter_test:

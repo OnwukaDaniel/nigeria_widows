@@ -184,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  particle_field:
+    dependency: "direct main"
+    description:
+      name: particle_field
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   particles_flutter:
     dependency: "direct main"
     description:
@@ -247,6 +254,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.5"
+  rnd:
+    dependency: "direct main"
+    description:
+      name: rnd
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   shared_preferences:
     dependency: "direct main"
     description:

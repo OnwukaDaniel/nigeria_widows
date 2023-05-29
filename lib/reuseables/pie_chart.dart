@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -5,6 +7,7 @@ import 'package:nigerian_widows/reuseables/pie_indicators.dart';
 import 'package:nigerian_widows/reuseables/resuable_text.dart';
 
 import '../models/HomePageData.dart';
+import '../sharednotifiers/app.dart';
 
 class CustomPieGraph extends StatefulWidget {
   final CustomText legendText;
@@ -84,72 +87,90 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
       countNgo++;
     }
 
-    return Material(
-      elevation: 10,
-      color: Theme.of(context).cardColor,
-      borderRadius: BorderRadius.circular(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          widget.legendText.text == ""? const SizedBox(): widget.legendText,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 4,
-                child: SizedBox(
-                  height: 220,
-                  child: Stack(
-                    alignment: Alignment.center,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: ValueListenableBuilder(
+          valueListenable: AppNotifier.backgroundPrefDataVn,
+          builder: (_, String value, Widget? child) {
+            return Material(
+              elevation: 50,
+              color: Theme.of(context).cardColor.withOpacity(
+                    value != "" ? .5 : 1,
+                  ),
+              borderRadius: BorderRadius.circular(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.legendText.text == ""
+                      ? const SizedBox()
+                      : widget.legendText,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Positioned(child: widget.centerText),
-                      PieChart(
-                        PieChartData(
-                          pieTouchData: PieTouchData(
-                            touchCallback:
-                                (FlTouchEvent event, pieTouchResponse) {
-                              setState(() {
-                                if (!event.isInterestedForInteractions ||
-                                    pieTouchResponse == null ||
-                                    pieTouchResponse.touchedSection == null) {
-                                  touchedIndex = -1;
-                                  return;
-                                }
-                                touchedIndex = pieTouchResponse
-                                    .touchedSection!.touchedSectionIndex;
-                              });
-                            },
+                      Expanded(
+                        flex: 4,
+                        child: SizedBox(
+                          height: 220,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned(child: widget.centerText),
+                              PieChart(
+                                PieChartData(
+                                  pieTouchData: PieTouchData(
+                                    touchCallback:
+                                        (FlTouchEvent event, pieTouchResponse) {
+                                      setState(() {
+                                        if (!event
+                                                .isInterestedForInteractions ||
+                                            pieTouchResponse == null ||
+                                            pieTouchResponse.touchedSection ==
+                                                null) {
+                                          touchedIndex = -1;
+                                          return;
+                                        }
+                                        touchedIndex = pieTouchResponse
+                                            .touchedSection!
+                                            .touchedSectionIndex;
+                                      });
+                                    },
+                                  ),
+                                  centerSpaceRadius: widget.centerSpaceRadius,
+                                  startDegreeOffset: 180,
+                                  borderData: FlBorderData(show: false),
+                                  sectionsSpace: 1,
+                                  sections: sectionsData,
+                                ),
+                              ),
+                            ],
                           ),
-                          centerSpaceRadius: widget.centerSpaceRadius,
-                          startDegreeOffset: 180,
-                          borderData: FlBorderData(show: false),
-                          sectionsSpace: 1,
-                          sections: sectionsData,
                         ),
+                      ),
+                      ValueListenableBuilder(
+                        valueListenable: indicatorListVn,
+                        builder: (_, List<PieIndicators> indicatorList, __) {
+                          if (indicatorList.isEmpty) {
+                            return const SizedBox();
+                          }
+                          return Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: indicatorList,
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-              ValueListenableBuilder(
-                valueListenable: indicatorListVn,
-                builder: (_, List<PieIndicators> indicatorList, __) {
-                  if (indicatorList.isEmpty) {
-                    return const SizedBox();
-                  }
-                  return Expanded(
-                    flex: 3,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: indicatorList,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

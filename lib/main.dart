@@ -12,13 +12,10 @@ import 'package:nigerian_widows/viewmodel/users_view_model.dart';
 import 'package:nigerian_widows/viewmodel/widows_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'models/DataModel.dart';
 import 'screens/landing.dart';
 import 'screens/settings.dart';
 import 'screens/widows_data.dart';
 import 'viewmodel/paging_view_model.dart';
-import 'viewmodel/widow_json_view_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,28 +31,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  execute() async {
-    final String response = await rootBundle.loadString("assets/data.json");
-    List<dynamic> j = json.decode(response);
-    var data = j.map((e) => DataModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-    data.sort((a, b) {
-      var bList = b.husbandBereavementDate!
-          .toLowerCase()
-          .replaceAll(",", "")
-          .split(" ");
-      var aList = a.husbandBereavementDate!
-          .toLowerCase()
-          .replaceAll(",", "")
-          .split(" ");
-      return bList.last.compareTo(aList.last);
-    });
-    AppNotifier.jsonDataModelVN.value = data;
-  }
-
   @override
   void initState() {
-    //execute();
     super.initState();
     getPref();
   }
@@ -74,7 +51,6 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (_) => UsersViewModel()),
         ChangeNotifierProvider(create: (_) => PagingViewModel()),
-        ChangeNotifierProvider(create: (_) => WidowJsonViewModel()),
         ChangeNotifierProvider(create: (_) => ChartViewModel()),
         ChangeNotifierProvider(create: (_) => WidowsViewModel()),
       ],

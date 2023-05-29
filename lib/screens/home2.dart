@@ -1,13 +1,17 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:particle_field/particle_field.dart';
+import 'package:particles_flutter/particles_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rnd/rnd.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/DataModel.dart';
 import '../models/HomePageData.dart';
@@ -17,6 +21,7 @@ import '../reuseables/pie_chart.dart';
 import '../reuseables/resuable_text.dart';
 import '../reuseables/value_notifiers.dart';
 import '../sharednotifiers/app.dart';
+import '../util/app_constants.dart';
 import '../viewmodel/chart_view_model.dart';
 
 const Color light = Color(0xfff2f2ff);
@@ -118,44 +123,117 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<DataModel> data = [];
+  BackgroundPrefData decodeBackgroundFromString(String input,
+      {int identity = 1}) {
+    if (input == "") {
+      return BackgroundPrefData();
+    }
+    return BackgroundPrefData.fromJson(
+      jsonDecode(input) as Map<String, dynamic>,
+    );
+  }
 
-  execute() async {
-    final String response = await rootBundle.loadString("assets/data.json");
-    List<dynamic> j = json.decode(response);
-    var data =
-        j.map((e) => DataModel.fromJson(e as Map<String, dynamic>)).toList();
-    data.sort((a, b) {
-      var bList = b.husbandBereavementDate!
-          .toLowerCase()
-          .replaceAll(",", "")
-          .split(" ");
-      var aList = a.husbandBereavementDate!
-          .toLowerCase()
-          .replaceAll(",", "")
-          .split(" ");
-      return bList.last.compareTo(aList.last);
-    });
+  getBackgroundPref() async {
+    var pref = await SharedPreferences.getInstance();
+    var value = pref.getString("backgroundPrefData") ?? "";
+    AppNotifier.backgroundPrefDataVn.value = value;
+    var decoded = decodeBackgroundFromString(value);
   }
 
   @override
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      getBackgroundPref();
+    });
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       AppNotifier.toolbarTitleVn.value = "Nigerian Widows";
+      getBackgroundPref();
     });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     ChartViewModel chartViewModel = context.watch<ChartViewModel>();
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: ValueListenableBuilder(
-        valueListenable: AppNotifier.jsonDataModelVN,
-        builder: (BuildContext context, List<DataModel> value, Widget? child) {
-          return _ui(chartViewModel, context);
-        },
+      body: Stack(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: AppNotifier.backgroundPrefDataVn,
+            builder: (_, String value, Widget? child) {
+              if (value == "") return const SizedBox();
+              BackgroundPrefData data = decodeBackgroundFromString(value);
+
+              print(
+                  "data.numberOfParticles ********** ${data.numberOfParticles}");
+
+              if (data.identity == 2) {
+                return Container(
+                  clipBehavior: Clip.hardEdge,
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ColoredBox(
+                    color: const Color(0xFF110018),
+                    child: cometParticles.stackBelow(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.menu,
+                              size: 20,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
+                            ),
+                            Text(
+                              AppConstants.appName,
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .color,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      scale: 1.1,
+                    ),
+                  ),
+                );
+              }
+              return Container(
+                color: AppConstants().constantsToColor(data.backgroundColor),
+                child: CircularParticle(
+                  isRandomColor: data.isRandomColor,
+                  width: width,
+                  height: height,
+                  awayRadius: data.awayRadius,
+                  numberOfParticles: data.numberOfParticles,
+                  speedOfParticles: data.speedOfParticles,
+                  maxParticleSize: data.maxParticleSize,
+                  particleColor: Colors.white.withOpacity(.7),
+                  awayAnimationDuration: const Duration(microseconds: 600),
+                  awayAnimationCurve: Curves.easeInOutBack,
+                  onTapAnimation: true,
+                  connectDots: data.connectDots,
+                  enableHover: true,
+                  hoverColor: Colors.black,
+                  hoverRadius: 90,
+                ),
+              );
+            },
+          ),
+          _ui(chartViewModel, context),
+        ],
       ),
     );
   }
@@ -177,9 +255,12 @@ class _HomeState extends State<Home> {
         children: [
           const SizedBox(height: kToolbarHeight + 13),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -190,9 +271,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -203,9 +287,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -216,9 +303,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -229,9 +319,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -242,9 +335,12 @@ class _HomeState extends State<Home> {
             ),
           ),
           Container(
-            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(vertical: 16.0),
             height: 200,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(32),
+            ),
             child: Center(
               child: Text(
                 "Loading",
@@ -260,15 +356,10 @@ class _HomeState extends State<Home> {
       if (chartViewModel.success) {
         int widowsCount = chartViewModel.chartModel.data.widowsCount.count;
         int lgaCount = chartViewModel.chartModel.data.lgaCount;
-        var lgaList = chartViewModel.chartModel.data.localGovData.data;
         List<BaseLocalGovtData> employmentStaList =
             chartViewModel.chartModel.data.employmentStatusData.data;
         List<BaseLocalGovtData> affiliationToNGOList =
             chartViewModel.chartModel.data.nGOAffiliation.data;
-        var childListData = chartViewModel.chartModel.data.childrenData.data;
-        var yearsInMarriageListData =
-            chartViewModel.chartModel.data.yearsInMarriageData.data;
-        var occupationData = chartViewModel.chartModel.data.occupationData.data;
 
         return ListView(
           physics: const BouncingScrollPhysics(),
@@ -313,156 +404,186 @@ class _HomeState extends State<Home> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                elevation: 10,
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 24, right: 12, left: 12),
-                      child: Text(
-                        "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyText1!.color,
-                        ),
-                      ),
-                    ),
-                    FutureBuilder(
-                      future: compute(computeLga, lgaList),
-                      builder: (_, AsyncSnapshot<dynamic> snapshot) {
-                        if (snapshot.hasData) {
-                          var raw = snapshot.data as List<dynamic>;
-                          List<BarChartGroupData> barGroups =
-                              raw.first as List<BarChartGroupData>;
-                          List<String> lgaLegend = raw.last as List<String>;
-                          FlTitlesData lgaTile = FlTitlesData(
-                            show: true,
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 90,
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                  var style = TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color,
-                                    fontSize: 10,
-                                  );
-                                  return SideTitleWidget(
-                                    space: 36.0,
-                                    axisSide: meta.axisSide,
-                                    angle: 98.96,
-                                    child: Text(
-                                      "${lgaLegend[value.toInt()]} - ",
-                                      style: style,
-                                    ),
-                                  );
-                                },
-                              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: ValueListenableBuilder(
+                    valueListenable: AppNotifier.backgroundPrefDataVn,
+                    builder: (_, String value, Widget? child) {
+                      return Material(
+                        elevation: 10,
+                        color: Theme.of(context).cardColor.withOpacity(
+                              value != "" ? .5 : 1,
                             ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 50,
-                                interval: 200,
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                  const style = TextStyle(
-                                      color: Color(0xff939393), fontSize: 10);
-                                  return SideTitleWidget(
-                                    angle: 0,
-                                    space: 15,
-                                    axisSide: meta.axisSide,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          " - ${meta.formattedValue}",
-                                          style: style,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          );
-
-                          return Container(
-                            width: width.toDouble(),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
-                            ),
-                            height: 350,
-                            child: RotatedBox(
-                              quarterTurns: 1,
-                              child: BarChart(
-                                BarChartData(
-                                  alignment: BarChartAlignment.center,
-                                  groupsSpace: 8,
-                                  barGroups: barGroups,
-                                  titlesData: lgaTile,
-                                  gridData: FlGridData(
-                                    show: false,
-                                    drawVerticalLine: false,
-                                  ),
-                                  borderData: FlBorderData(show: false),
-                                  barTouchData: BarTouchData(
-                                    touchTooltipData: BarTouchTooltipData(
-                                      fitInsideHorizontally: true,
-                                      fitInsideVertically: true,
-                                      tooltipBgColor: Colors.white,
-                                      getTooltipItem:
-                                          (groupData, int1, rodData, int2) {
-                                        return BarTooltipItem(
-                                          rodData.rodStackItems.first.toY
-                                              .toString(),
-                                          const TextStyle(),
-                                        );
-                                      },
-                                    ),
-                                    handleBuiltInTouches: true,
-                                    allowTouchBarBackDraw: true,
-                                    touchCallback:
-                                        (FlTouchEvent event, barTouchResponse) {
-                                      if (!event.isInterestedForInteractions ||
-                                          barTouchResponse == null ||
-                                          barTouchResponse.spot == null) {
-                                        return;
-                                      }
-                                    },
-                                  ),
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 24, right: 12, left: 12),
+                              child: Text(
+                                "WIDOWS REGISTERED BY LOCAL GOVERNMENT",
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
                                 ),
                               ),
                             ),
-                          );
-                        } else {
-                          return Center(
-                            child: Text(
-                              "Loading",
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .color,
+                            FutureBuilder(
+                              future: compute(
+                                computeLga,
+                                context
+                                    .watch<ChartViewModel>()
+                                    .chartModel
+                                    .data
+                                    .localGovData
+                                    .data,
                               ),
+                              builder: (_, AsyncSnapshot<dynamic> snapshot) {
+                                if (snapshot.hasData) {
+                                  var raw = snapshot.data as List<dynamic>;
+                                  List<BarChartGroupData> barGroups =
+                                      raw.first as List<BarChartGroupData>;
+                                  List<String> lgaLegend =
+                                      raw.last as List<String>;
+                                  FlTitlesData lgaTile = FlTitlesData(
+                                    show: true,
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 90,
+                                        getTitlesWidget:
+                                            (double value, TitleMeta meta) {
+                                          var style = TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .color,
+                                            fontSize: 10,
+                                          );
+                                          return SideTitleWidget(
+                                            space: 36.0,
+                                            axisSide: meta.axisSide,
+                                            angle: 98.96,
+                                            child: Text(
+                                              "${lgaLegend[value.toInt()]} - ",
+                                              style: style,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    rightTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        reservedSize: 50,
+                                        interval: 200,
+                                        getTitlesWidget:
+                                            (double value, TitleMeta meta) {
+                                          const style = TextStyle(
+                                              color: Color(0xff939393),
+                                              fontSize: 10);
+                                          return SideTitleWidget(
+                                            angle: 0,
+                                            space: 15,
+                                            axisSide: meta.axisSide,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  " - ${meta.formattedValue}",
+                                                  style: style,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    topTitles: AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(showTitles: false),
+                                    ),
+                                  );
+
+                                  return Container(
+                                    width: width.toDouble(),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                      horizontal: 16,
+                                    ),
+                                    height: 350,
+                                    child: RotatedBox(
+                                      quarterTurns: 1,
+                                      child: BarChart(
+                                        BarChartData(
+                                          alignment: BarChartAlignment.center,
+                                          groupsSpace: 8,
+                                          barGroups: barGroups,
+                                          titlesData: lgaTile,
+                                          gridData: FlGridData(
+                                            show: false,
+                                            drawVerticalLine: false,
+                                          ),
+                                          borderData: FlBorderData(show: false),
+                                          barTouchData: BarTouchData(
+                                            touchTooltipData:
+                                                BarTouchTooltipData(
+                                              fitInsideHorizontally: true,
+                                              fitInsideVertically: true,
+                                              tooltipBgColor: Colors.white,
+                                              getTooltipItem: (groupData, int1,
+                                                  rodData, int2) {
+                                                return BarTooltipItem(
+                                                  rodData
+                                                      .rodStackItems.first.toY
+                                                      .toString(),
+                                                  const TextStyle(),
+                                                );
+                                              },
+                                            ),
+                                            handleBuiltInTouches: true,
+                                            allowTouchBarBackDraw: true,
+                                            touchCallback: (FlTouchEvent event,
+                                                barTouchResponse) {
+                                              if (!event
+                                                      .isInterestedForInteractions ||
+                                                  barTouchResponse == null ||
+                                                  barTouchResponse.spot ==
+                                                      null) {
+                                                return;
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: Text(
+                                      "Loading",
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
@@ -500,7 +621,15 @@ class _HomeState extends State<Home> {
               ),
             ),
             FutureBuilder(
-              future: compute(computeChildrenList, childListData),
+              future: compute(
+                computeChildrenList,
+                context
+                    .watch<ChartViewModel>()
+                    .chartModel
+                    .data
+                    .childrenData
+                    .data,
+              ),
               builder: (_, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasData) {
                   List<int> showIndexes = [];
@@ -619,84 +748,107 @@ class _HomeState extends State<Home> {
                     ),
                   );
 
-                  return Material(
-                    elevation: 10,
-                    borderRadius: BorderRadius.circular(12.0),
-                    color: Theme.of(context).cardColor,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: "NUMBER OF CHILDREN",
-                            padding: const EdgeInsets.only(
-                              right: 16,
-                              left: 16,
-                              top: 20,
-                            ),
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color,
-                            ),
-                          ),
-                          Container(
-                            height: ch,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 16,
-                            ),
-                            child: LineChart(
-                              LineChartData(
-                                showingTooltipIndicators:
-                                    showIndexes.map((index) {
-                                  return ShowingTooltipIndicators([
-                                    LineBarSpot(
-                                      tooltipsOnBar,
-                                      lineChartBarData.indexOf(tooltipsOnBar),
-                                      tooltipsOnBar.spots[index],
-                                    ),
-                                  ]);
-                                }).toList(),
-                                gridData: FlGridData(show: false),
-                                lineTouchData: LineTouchData(
-                                  getTouchLineEnd: (data, index) => 0,
-                                  getTouchedSpotIndicator:
-                                      (barData, List<int> spotIndexes) {
-                                    return spotIndexes
-                                        .map((spotIndex) {})
-                                        .toList();
-                                  },
-                                  enabled: true,
-                                  touchTooltipData: LineTouchTooltipData(
-                                    tooltipBgColor: const Color(0xff602bf8),
-                                    tooltipRoundedRadius: 5,
-                                    tooltipPadding: const EdgeInsets.all(4),
-                                    getTooltipItems:
-                                        (List<LineBarSpot> lineBarsSpot) {
-                                      return lineBarsSpot.map((lineBarSpot) {
-                                        return LineTooltipItem(
-                                          lineBarSpot.y.toInt().toString(),
-                                          const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.white,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
-                                  ),
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: ValueListenableBuilder(
+                        valueListenable: AppNotifier.backgroundPrefDataVn,
+                        builder: (_, String value, Widget? child) {
+                          return Material(
+                            elevation: 10,
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Theme.of(context).cardColor.withOpacity(
+                                  value != "" ? .5 : 1,
                                 ),
-                                titlesData: flTileData,
-                                borderData: FlBorderData(show: false),
-                                minX: 2,
-                                maxX: (childrenDataList.length + 1).toDouble(),
-                                minY: 0,
-                                maxY: childrenMax * 1.5,
-                                lineBarsData: lineChartBarData,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    text: "NUMBER OF CHILDREN",
+                                    padding: const EdgeInsets.only(
+                                      right: 16,
+                                      left: 16,
+                                      top: 20,
+                                    ),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                    ),
+                                  ),
+                                  Container(
+                                    height: ch,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 16,
+                                    ),
+                                    child: LineChart(
+                                      LineChartData(
+                                        showingTooltipIndicators:
+                                            showIndexes.map((index) {
+                                          return ShowingTooltipIndicators([
+                                            LineBarSpot(
+                                              tooltipsOnBar,
+                                              lineChartBarData
+                                                  .indexOf(tooltipsOnBar),
+                                              tooltipsOnBar.spots[index],
+                                            ),
+                                          ]);
+                                        }).toList(),
+                                        gridData: FlGridData(show: false),
+                                        lineTouchData: LineTouchData(
+                                          getTouchLineEnd: (data, index) => 0,
+                                          getTouchedSpotIndicator:
+                                              (barData, List<int> spotIndexes) {
+                                            return spotIndexes
+                                                .map((spotIndex) {})
+                                                .toList();
+                                          },
+                                          enabled: true,
+                                          touchTooltipData:
+                                              LineTouchTooltipData(
+                                            tooltipBgColor:
+                                                const Color(0xff602bf8),
+                                            tooltipRoundedRadius: 5,
+                                            tooltipPadding:
+                                                const EdgeInsets.all(4),
+                                            getTooltipItems: (List<LineBarSpot>
+                                                lineBarsSpot) {
+                                              return lineBarsSpot
+                                                  .map((lineBarSpot) {
+                                                return LineTooltipItem(
+                                                  lineBarSpot.y
+                                                      .toInt()
+                                                      .toString(),
+                                                  const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                  ),
+                                                );
+                                              }).toList();
+                                            },
+                                          ),
+                                        ),
+                                        titlesData: flTileData,
+                                        borderData: FlBorderData(show: false),
+                                        minX: 2,
+                                        maxX: (childrenDataList.length + 1)
+                                            .toDouble(),
+                                        minY: 0,
+                                        maxY: childrenMax * 1.5,
+                                        lineBarsData: lineChartBarData,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
                   );
@@ -705,7 +857,15 @@ class _HomeState extends State<Home> {
               },
             ),
             FutureBuilder(
-              future: compute(computeYearsInMarriage, yearsInMarriageListData),
+              future: compute(
+                computeYearsInMarriage,
+                context
+                    .watch<ChartViewModel>()
+                    .chartModel
+                    .data
+                    .yearsInMarriageData
+                    .data,
+              ),
               builder: (_, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasData) {
                   List<int> value =
@@ -776,62 +936,83 @@ class _HomeState extends State<Home> {
                   );
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Material(
-                      elevation: 10,
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Theme.of(context).cardColor,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: "YEARS IN MARRIAGE",
-                            padding: const EdgeInsets.only(
-                                top: 34, right: 16, left: 16),
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 42.0, bottom: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 36,
-                                  height: 18,
-                                  color: dark,
-                                ),
-                                CustomText(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  text: "Years",
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: ValueListenableBuilder(
+                          valueListenable: AppNotifier.backgroundPrefDataVn,
+                          builder: (_, String value, Widget? child) {
+                            return Material(
+                              elevation: 10,
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Theme.of(context).cardColor.withOpacity(
+                                    value != "" ? .5 : 1,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          CustomBarChart(
-                            typeMax: yearsMax,
-                            smallWidth: 18,
-                            largeWidth: 18 + 10,
-                            map: yearsInMarriageListData,
-                            groupsSpace: 10,
-                            gridData: FlGridData(
-                              show: false,
-                              drawVerticalLine: false,
-                            ),
-                            borderData: FlBorderData(show: false),
-                            titlesData: tiles,
-                            alignment: BarChartAlignment.spaceAround,
-                          ),
-                        ],
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    text: "YEARS IN MARRIAGE",
+                                    padding: const EdgeInsets.only(
+                                        top: 34, right: 16, left: 16),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 42.0, bottom: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 36,
+                                          height: 18,
+                                          color: dark,
+                                        ),
+                                        CustomText(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          text: "Years",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1!
+                                                .color,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  CustomBarChart(
+                                    typeMax: yearsMax,
+                                    smallWidth: 18,
+                                    largeWidth: 18 + 10,
+                                    map: context
+                                        .watch<ChartViewModel>()
+                                        .chartModel
+                                        .data
+                                        .yearsInMarriageData
+                                        .data,
+                                    groupsSpace: 10,
+                                    gridData: FlGridData(
+                                      show: false,
+                                      drawVerticalLine: false,
+                                    ),
+                                    borderData: FlBorderData(show: false),
+                                    titlesData: tiles,
+                                    alignment: BarChartAlignment.spaceAround,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -840,7 +1021,15 @@ class _HomeState extends State<Home> {
               },
             ),
             FutureBuilder(
-              future: compute(computeOccupation, occupationData),
+              future: compute(
+                computeOccupation,
+                context
+                    .watch<ChartViewModel>()
+                    .chartModel
+                    .data
+                    .occupationData
+                    .data,
+              ),
               builder: (_, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasData) {
                   List<int> value =
@@ -911,37 +1100,57 @@ class _HomeState extends State<Home> {
                   );
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Material(
-                      elevation: 10,
-                      borderRadius: BorderRadius.circular(12.0),
-                      color: Theme.of(context).cardColor,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            text: "WIDOWS TYPE OF OCCUPATION",
-                            padding: const EdgeInsets.only(
-                                top: 34, right: 16, left: 16),
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyText1!.color,
-                            ),
-                          ),
-                          CustomBarChart(
-                            typeMax: valueMax,
-                            smallWidth: 18,
-                            largeWidth: 18 + 10,
-                            map: occupationData,
-                            groupsSpace: 10,
-                            gridData: FlGridData(
-                              show: false,
-                              drawVerticalLine: false,
-                            ),
-                            borderData: FlBorderData(show: false),
-                            titlesData: tiles,
-                            alignment: BarChartAlignment.spaceAround,
-                          ),
-                        ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(32),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                        child: ValueListenableBuilder(
+                          valueListenable: AppNotifier.backgroundPrefDataVn,
+                          builder: (_, String value, Widget? child) {
+                            return Material(
+                              elevation: 10,
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Theme.of(context).cardColor.withOpacity(
+                                    value != "" ? .5 : 1,
+                                  ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    text: "WIDOWS TYPE OF OCCUPATION",
+                                    padding: const EdgeInsets.only(
+                                        top: 34, right: 16, left: 16),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
+                                    ),
+                                  ),
+                                  CustomBarChart(
+                                    typeMax: valueMax,
+                                    smallWidth: 18,
+                                    largeWidth: 18 + 10,
+                                    map: context
+                                        .watch<ChartViewModel>()
+                                        .chartModel
+                                        .data
+                                        .occupationData
+                                        .data,
+                                    groupsSpace: 10,
+                                    gridData: FlGridData(
+                                      show: false,
+                                      drawVerticalLine: false,
+                                    ),
+                                    borderData: FlBorderData(show: false),
+                                    titlesData: tiles,
+                                    alignment: BarChartAlignment.spaceAround,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );
@@ -957,89 +1166,53 @@ class _HomeState extends State<Home> {
     }
   }
 
-  FlBorderData borderData = FlBorderData(
-    show: false,
+  final ParticleField cometParticles = ParticleField(
+    // start out the same:
+    spriteSheet: SpriteSheet(
+      image: const AssetImage('assets/splash/african_woman.png'),
+      frameWidth: 21,
+    ),
+    blendMode: BlendMode.dstIn,
+    origin: Alignment.topCenter,
+    // but with a different onTick handler:
+    onTick: (controller, elapsed, size) {
+      List<Particle> particles = controller.particles;
+      // add 10 particles each tick:
+      for (int i = 10; i > 0; i--) {
+        particles.add(Particle(
+          // assign a random blue-ish color:
+          color: HSLColor.fromAHSL(1, rnd(10, 90), 1, 0.5).toColor(),
+          // set a starting location:
+          x: rnd(size.width / 2) * rnd.getSign(),
+          y: rnd(-10, size.height),
+          // add a tiny bit of initial x & y velocity
+          vx: rnd(-2, 2),
+          vy: rnd(-1, 1),
+          // start on a random frame, with some random rotation:
+          frame: rnd.getInt(0, 10000),
+          rotation: rnd(pi),
+          // give it a random lifespan (in ticks):
+          lifespan: rnd(30, 80),
+        ));
+      }
+      for (int i = particles.length - 1; i >= 0; i--) {
+        Particle particle = particles[i];
+        // calculate ratio of age vs lifespan:
+        double ratio = particle.age / particle.lifespan;
+        // update the particle (remember, it automatically applies vx/vy):
+        particle.update(
+          // accelerate, by adding to velocity y each frame:
+          vy: particle.vy + 0.15,
+          // update x, with some math to move toward the center:
+          x: particle.x * sqrt(1 - ratio * 0.15) + particle.vx,
+          // scale down as the particle approaches its lifespan:
+          scale: sqrt((1 - ratio) * 4),
+          // advance the spritesheet frame:
+          frame: particle.frame + 1,
+        );
+        // remove particle if its age exceeds its lifespan:
+        if (particle.age > particle.lifespan) particles.removeAt(i);
+      }
+    },
   );
-}
-
-String smartDate(String input, String dob) {
-  List<String> months = [
-    "january",
-    "february",
-    "march",
-    "april",
-    "may",
-    "june",
-    "july",
-    "august",
-    "september",
-    "october",
-    "november",
-    "december",
-  ];
-  var dateOdBirth = DateTime.parse(dob);
-
-  var list = input.toLowerCase().replaceAll(",", "").split(" ");
-  var year = int.parse(list.last);
-  var month = months.indexOf(list[1]);
-  var day = int.parse(list[0]);
-  var d = DateTime(year, month, day);
-  var difference = d.difference(dateOdBirth);
-  var lonelyYears = difference.inDays / 365;
-
-  if (lonelyYears < 20) {
-    return "20";
-  } else if (lonelyYears > 19 && lonelyYears < 25) {
-    return "20-24";
-  } else if (lonelyYears > 24 && lonelyYears < 30) {
-    return "25-29";
-  } else if (lonelyYears > 29 && lonelyYears < 35) {
-    return "30-34";
-  } else if (lonelyYears > 34 && lonelyYears < 40) {
-    return "35-39";
-  } else if (lonelyYears > 39 && lonelyYears < 45) {
-    return "40-44";
-  } else if (lonelyYears > 44 && lonelyYears < 50) {
-    return "45-49";
-  } else if (lonelyYears > 49 && lonelyYears < 55) {
-    return "50-54";
-  } else if (lonelyYears > 54 && lonelyYears < 60) {
-    return "55-59";
-  } else if (lonelyYears >= 60) {
-    return "60+";
-  }
-  return "";
-}
-
-String widowTime(String input, String regDate) {
-  var regD = DateTime.parse(regDate);
-
-  var d = DateTime(regD.year);
-
-  var list = input.toLowerCase().replaceAll(",", "").split(" ");
-  var year = int.parse(list.last);
-  var dateBereavement = DateTime(year);
-  var difference = d.difference(dateBereavement);
-  var lonelyYears = difference.inDays / 365;
-
-  if (lonelyYears < 3) {
-    return "0-2";
-  } else if (lonelyYears >= 3 && lonelyYears < 6) {
-    return "3-5";
-  } else if (lonelyYears >= 6 && lonelyYears < 9) {
-    return "6-8";
-  } else if (lonelyYears >= 9 && lonelyYears < 12) {
-    return "9-11";
-  } else if (lonelyYears >= 12 && lonelyYears < 16) {
-    return "12-15";
-  } else if (lonelyYears >= 16 && lonelyYears < 21) {
-    return "16-20";
-  } else if (lonelyYears >= 21 && lonelyYears < 26) {
-    return "21-25";
-  } else if (lonelyYears >= 26 && lonelyYears < 30) {
-    return "26-29";
-  } else if (lonelyYears > 30) {
-    return "30+";
-  }
-  return lonelyYears.toString();
 }

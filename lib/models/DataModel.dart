@@ -1,114 +1,50 @@
-import 'dart:ffi';
+class BackgroundPrefData {
+  bool isRandomColor = false;
+  double awayRadius = 20;
+  double numberOfParticles = 100;
+  double speedOfParticles = 1.5;
+  double maxParticleSize = 7;
+  double particleColor = 1;
+  int backgroundColor = 8;
+  double opacity = 0;
+  bool connectDots = true;
+  int identity = 1;
 
-class DataModel {
-  String? ngoName = "";
-  String? fullName = "";
-  String? husbandOccupation = "";
-  String? accountName = "";
-  String? address = "";
-  String? ngoMembership = "";
-  String? husbandName = "";
-  String? employmentStatus = "";
-  String? state = "";
-  int? numberOfChildren = 0;
-  String occupation = "";
-  String? id = "";
-  String? dob = "";
-  String? phoneNumber = "";
-  String? husbandBereavementDate = "";
-  String? homeTown = "";
-  String? bankName = "";
-  String? senatorialZone = "";
-  String? lga = "";
-  int? yearOfMarriage = 0;
-  String? accountNumber = "";
-  String? categoryBasedOnNeeds = "";
-  int? oneOrTwo = 0;
-  String? registrationDate = "";
-  String? receivedBy = "";
+  BackgroundPrefData({
+    this.isRandomColor = false,
+    this.awayRadius = 20,
+    this.numberOfParticles = 100,
+    this.speedOfParticles = 1.5,
+    this.maxParticleSize = 7,
+    this.particleColor = 1,
+    this.backgroundColor = 8,
+    this.connectDots = true,
+    this.identity = 1,
+  });
 
-  DataModel(
-      {this.ngoName = "",
-      this.fullName = "",
-      this.husbandOccupation = "",
-      this.accountName = "",
-      this.address = "",
-      this.ngoMembership = "",
-      this.husbandName = "",
-      this.employmentStatus = "",
-      this.state = "",
-      this.numberOfChildren = 0,
-      this.occupation = "",
-      this.id = "",
-      this.dob = "",
-      this.phoneNumber = "",
-      this.husbandBereavementDate = "",
-      this.homeTown = "",
-      this.bankName = "",
-      this.senatorialZone = "",
-      this.lga = "",
-      this.yearOfMarriage = 0,
-      this.accountNumber = "",
-      this.categoryBasedOnNeeds = "",
-      this.oneOrTwo = 0,
-      this.registrationDate = "",
-      this.receivedBy = ""});
-
-  DataModel.fromJson(Map<String, dynamic> json) {
-    ngoName = json['ngoName'];
-    fullName = json['fullName'];
-    husbandOccupation = json['husbandOccupation'];
-    accountName = json['accountName'];
-    address = json['address'];
-    ngoMembership = json['ngoMembership'];
-    husbandName = json['husbandName'];
-    employmentStatus = json['employmentStatus'];
-    state = json['state'];
-    numberOfChildren = json['numberOfChildren'];
-    occupation = json['occupation'] ?? "null";
-    id = json['id'];
-    dob = json['dob'];
-    phoneNumber = json['phoneNumber'];
-    husbandBereavementDate = json['husbandBereavementDate'];
-    homeTown = json['homeTown'];
-    bankName = json['bankName'];
-    senatorialZone = json['senatorialZone'];
-    lga = json['lga'];
-    yearOfMarriage = json['yearOfMarriage'];
-    accountNumber = json['accountNumber'];
-    categoryBasedOnNeeds = json['categoryBasedOnNeeds'];
-    oneOrTwo = json['oneOrTwo'];
-    registrationDate = json['registrationDate'];
-    receivedBy = json['receivedBy'];
+  BackgroundPrefData.fromJson(Map<String, dynamic> json) {
+    isRandomColor = json['isRandomColor'];
+    awayRadius = json['awayRadius'];
+    numberOfParticles = json['numberOfParticles'];
+    speedOfParticles = json['speedOfParticles'];
+    maxParticleSize = json['maxParticleSize'];
+    particleColor = json['particleColor'];
+    backgroundColor = json['backgroundColor'];
+    connectDots = json['connectDots'];
+    identity = json['identity'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ngoName'] = this.ngoName;
-    data['fullName'] = this.fullName;
-    data['husbandOccupation'] = this.husbandOccupation;
-    data['accountName'] = this.accountName;
-    data['address'] = this.address;
-    data['ngoMembership'] = this.ngoMembership;
-    data['husbandName'] = this.husbandName;
-    data['employmentStatus'] = this.employmentStatus;
-    data['state'] = this.state;
-    data['numberOfChildren'] = this.numberOfChildren;
-    data['occupation'] = this.occupation;
-    data['id'] = this.id;
-    data['dob'] = this.dob;
-    data['phoneNumber'] = this.phoneNumber;
-    data['husbandBereavementDate'] = this.husbandBereavementDate;
-    data['homeTown'] = this.homeTown;
-    data['bankName'] = this.bankName;
-    data['senatorialZone'] = this.senatorialZone;
-    data['lga'] = this.lga;
-    data['yearOfMarriage'] = this.yearOfMarriage;
-    data['accountNumber'] = this.accountNumber;
-    data['categoryBasedOnNeeds'] = this.categoryBasedOnNeeds;
-    data['oneOrTwo'] = this.oneOrTwo;
-    data['registrationDate'] = this.registrationDate;
-    data['receivedBy'] = this.receivedBy;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['isRandomColor'] = isRandomColor;
+    data['awayRadius'] = awayRadius;
+    data['numberOfParticles'] = numberOfParticles;
+    data['speedOfParticles'] = speedOfParticles;
+    data['maxParticleSize'] = maxParticleSize;
+    data['particleColor'] = particleColor;
+    data['backgroundColor'] = backgroundColor;
+    data['connectDots'] = connectDots;
+    data['identity'] = identity;
     return data;
   }
 }

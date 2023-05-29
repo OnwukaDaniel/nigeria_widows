@@ -28,7 +28,6 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
@@ -53,6 +52,7 @@ class _SettingsState extends State<Settings> {
                   onTap: () async {
                     var pref = await SharedPreferences.getInstance();
                     pref.setBool("isDark", false);
+                    setBackgroundPref("");
                     AppNotifier.appTheme.value = AppTheme.lightTheme;
                   },
                   child: ThemeDummy(
@@ -65,6 +65,7 @@ class _SettingsState extends State<Settings> {
                   onTap: () async {
                     var pref = await SharedPreferences.getInstance();
                     pref.setBool("isDark", true);
+                    setBackgroundPref("");
                     AppNotifier.appTheme.value = AppTheme.darkTheme;
                   },
                   child: ThemeDummy(
@@ -108,6 +109,12 @@ class _SettingsState extends State<Settings> {
         ),
       ),
     );
+  }
+
+  setBackgroundPref(String input) async {
+    var pref = await SharedPreferences.getInstance();
+    pref.setString("backgroundPrefData", input);
+    AppNotifier.backgroundPrefDataVn.value = input;
   }
 }
 

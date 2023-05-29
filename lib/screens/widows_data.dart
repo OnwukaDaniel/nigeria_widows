@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:nigerian_widows/screens/transistion/RightToLeft.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/viewmodel/users_view_model.dart';
 import "package:provider/provider.dart";
@@ -57,14 +57,73 @@ class _WidowsDataState extends State<WidowsData> {
 
   _ui2(WidowsViewModel widowsViewModel) {
     if (widowsViewModel.loading) {
-      return Center(
-        child: SpinKitCubeGrid(
-          color: AppColor.appColor.withOpacity(0.5),
-          size: 100,
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        AppNotifier.toolbarTitleVn.value = "Loading ...";
+      });
+
+      return GridView.builder(
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: 20,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          mainAxisExtent: 238,
         ),
+        itemBuilder: (BuildContext context, int index) {
+          double font = 9;
+
+          return Container(
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Icon(
+                    Icons.account_circle_outlined,
+                    color: Theme.of(context).textTheme.bodyText1!.color,
+                    size: 100,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const DetailItem(data1: "Name ", data2: "-----"),
+                const SizedBox(height: 4),
+                const DetailItem(data1: "Date of birth ", data2: "-----"),
+                const SizedBox(height: 4),
+                const DetailItem(data1: "Address ", data2: "-----"),
+                const SizedBox(height: 4),
+                const DetailItem(data1: "Phone ", data2: "-----"),
+                const SizedBox(height: 4),
+                const DetailItem(data1: "State ", data2: "-----"),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "......",
+                      style: TextStyle(
+                        fontSize: font + 1,
+                        color: AppColor.appColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          );
+        },
       );
     } else {
       if (widowsViewModel.success) {
+        SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+          AppNotifier.toolbarTitleVn.value = "Widow's data";
+        });
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
@@ -113,11 +172,7 @@ class _WidowsDataState extends State<WidowsData> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) {
-                            return WidowProfile(data: data, image: img);
-                          },
-                        ),
+                        RightToLeft(page: WidowProfile(data: data, image: img)),
                       );
                     },
                     child: Row(
