@@ -56,4 +56,24 @@ class UserServices {
       );
     }
   }
+
+  static Future<Object> getMoreWidowsData({int input = -1}) async {
+    Response response = await http.get(
+      Uri.parse(
+        'https://us-central1-ondo-widows-f2964.cloudfunctions.net/allWidows?lastIndex=$input',
+      ),
+    );
+
+    if (response.statusCode == AppConstants.SUCCESS) {
+      return APIResponse(
+        code: AppConstants.SUCCESS,
+        response: response.body,
+      );
+    } else {
+      return APIResponse(
+        code: AppConstants.FAILURE,
+        response: "No response",
+      );
+    }
+  }
 }

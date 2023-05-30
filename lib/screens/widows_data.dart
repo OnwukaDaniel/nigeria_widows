@@ -60,7 +60,6 @@ class _WidowsDataState extends State<WidowsData> {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         AppNotifier.toolbarTitleVn.value = "Loading ...";
       });
-
       return GridView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
@@ -127,7 +126,7 @@ class _WidowsDataState extends State<WidowsData> {
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
-          itemCount: context.read<WidowsViewModel>().specificPageData.length,
+          itemCount: context.read<WidowsViewModel>().widowModel.data!.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 4,
@@ -138,7 +137,7 @@ class _WidowsDataState extends State<WidowsData> {
             double font = 9;
             int countPerPage = context.read<WidowsViewModel>().countPerPage;
             int pageNumber = context.read<WidowsViewModel>().pagesCurrent;
-            var data = context.read<WidowsViewModel>().specificPageData[index];
+            var data = context.read<WidowsViewModel>().widowModel.data![index];
 
             var img =
                 "assets/widow_images/profile${(pageNumber - 1) * countPerPage + index + 1}.png";
@@ -207,7 +206,6 @@ class _WidowsDataState extends State<WidowsData> {
         );
       }
     }
-    return SizedBox();
   }
 
   _bottomPageView(WidowsViewModel widowsViewModel) {

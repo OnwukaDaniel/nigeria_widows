@@ -14,6 +14,7 @@ class WidowsViewModel extends ChangeNotifier {
   bool _success = false;
   int _pagesCount = 0;
   int _pagesCurrent = 1;
+  int _lastPageIndex = -1;
   int countPerPage = 6;
   List<String> _pageIndexView = [];
 
@@ -29,12 +30,14 @@ class WidowsViewModel extends ChangeNotifier {
 
   int get pagesCurrent => _pagesCurrent;
 
+  int get lastPageIndex => _lastPageIndex;
+
   List<Data> get specificPageData => _specificPageData;
 
   List<String> get pageIndexView => _pageIndexView;
 
   WidowsViewModel() {
-    getWidowsData();
+    getMoreWidowsData();
   }
 
   setLoading(bool loading) async {
@@ -72,6 +75,23 @@ class WidowsViewModel extends ChangeNotifier {
         setPages(1);
       }
       _specificPageData = data.data!;
+      setLoading(false);
+      setSuccess(true);
+    } else {
+      setLoading(false);
+      setSuccess(false);
+    }
+  }
+
+  getMoreWidowsData({int index = -1}) async {
+    setLoading(true);
+    var response = await UserServices.getMoreWidowsData(
+      input: index,
+    ) as APIResponse;
+    if (response.code == AppConstants.SUCCESS) {
+      WidowData data = WidowData.fromJson(jsonDecode(response.response));
+      _widowModel = data;
+      _lastPageIndex = _widowModel.lastIndex!;
       setLoading(false);
       setSuccess(true);
     } else {
@@ -135,10 +155,10 @@ class WidowsViewModel extends ChangeNotifier {
       _pageIndexView = list;
     }
     AppNotifier.selectedPageVn.value = pagesCurrent;
-    getPageData(pagesCurrent);
+    //getPageData(pagesCurrent);
   }
 
-  getPageData(int pagesCurrent) {
-
+  lastIndexToPageNumber(int lastPageIndex) {
+    double pageNumber = lastPageIndex / 17;
   }
 }
