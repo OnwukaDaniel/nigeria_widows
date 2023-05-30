@@ -71,7 +71,7 @@ class WidowsViewModel extends ChangeNotifier {
       } else {
         setPages(1);
       }
-      getPageData(1);
+      _specificPageData = data.data!;
       setLoading(false);
       setSuccess(true);
     } else {
@@ -138,13 +138,7 @@ class WidowsViewModel extends ChangeNotifier {
     getPageData(pagesCurrent);
   }
 
-  getPageData(int input) {
-    if (_pagesCount != 0) {
-      _pagesCurrent = input;
-      _specificPageData = _widowModel.data!.sublist(
-        (input - 1) * countPerPage,
-        input * countPerPage,
-      );
-    }
+  getPageData(int pagesCurrent) {
+
   }
 }

@@ -402,16 +402,28 @@ class _HomeState extends State<Home> {
               iconPath: "assets/icons/healthy_community.png",
               wavePath: "assets/icons/wave_graph.png",
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: ValueListenableBuilder(
-                    valueListenable: AppNotifier.backgroundPrefDataVn,
-                    builder: (_, String value, Widget? child) {
-                      return Material(
+            ValueListenableBuilder(
+              valueListenable: AppNotifier.backgroundPrefDataVn,
+              builder: (_, String value, Widget? child) {
+                return Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      value == ""
+                          ? BoxShadow(
+                              offset: const Offset(1, 1),
+                              color: Theme.of(context).shadowColor,
+                              spreadRadius: 1,
+                              blurRadius: 35,
+                            )
+                          : const BoxShadow(color: Colors.transparent),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Material(
                         elevation: 10,
                         color: Theme.of(context).cardColor.withOpacity(
                               value != "" ? .5 : 1,
@@ -581,11 +593,11 @@ class _HomeState extends State<Home> {
                             ),
                           ],
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -748,109 +760,125 @@ class _HomeState extends State<Home> {
                     ),
                   );
 
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: ValueListenableBuilder(
-                        valueListenable: AppNotifier.backgroundPrefDataVn,
-                        builder: (_, String value, Widget? child) {
-                          return Material(
-                            elevation: 10,
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Theme.of(context).cardColor.withOpacity(
-                                  value != "" ? .5 : 1,
-                                ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomText(
-                                    text: "NUMBER OF CHILDREN",
-                                    padding: const EdgeInsets.only(
-                                      right: 16,
-                                      left: 16,
-                                      top: 20,
-                                    ),
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .color,
-                                    ),
+                  return ValueListenableBuilder(
+                    valueListenable: AppNotifier.backgroundPrefDataVn,
+                    builder: (_, String value, Widget? child) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            value == ""
+                                ? BoxShadow(
+                                    offset: const Offset(1, 1),
+                                    color: Theme.of(context).shadowColor,
+                                    spreadRadius: 1,
+                                    blurRadius: 35,
+                                  )
+                                : const BoxShadow(color: Colors.transparent),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Material(
+                              elevation: 10,
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Theme.of(context).cardColor.withOpacity(
+                                    value != "" ? .5 : 1,
                                   ),
-                                  Container(
-                                    height: ch,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                      horizontal: 16,
-                                    ),
-                                    child: LineChart(
-                                      LineChartData(
-                                        showingTooltipIndicators:
-                                            showIndexes.map((index) {
-                                          return ShowingTooltipIndicators([
-                                            LineBarSpot(
-                                              tooltipsOnBar,
-                                              lineChartBarData
-                                                  .indexOf(tooltipsOnBar),
-                                              tooltipsOnBar.spots[index],
-                                            ),
-                                          ]);
-                                        }).toList(),
-                                        gridData: FlGridData(show: false),
-                                        lineTouchData: LineTouchData(
-                                          getTouchLineEnd: (data, index) => 0,
-                                          getTouchedSpotIndicator:
-                                              (barData, List<int> spotIndexes) {
-                                            return spotIndexes
-                                                .map((spotIndex) {})
-                                                .toList();
-                                          },
-                                          enabled: true,
-                                          touchTooltipData:
-                                              LineTouchTooltipData(
-                                            tooltipBgColor:
-                                                const Color(0xff602bf8),
-                                            tooltipRoundedRadius: 5,
-                                            tooltipPadding:
-                                                const EdgeInsets.all(4),
-                                            getTooltipItems: (List<LineBarSpot>
-                                                lineBarsSpot) {
-                                              return lineBarsSpot
-                                                  .map((lineBarSpot) {
-                                                return LineTooltipItem(
-                                                  lineBarSpot.y
-                                                      .toInt()
-                                                      .toString(),
-                                                  const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                );
-                                              }).toList();
-                                            },
-                                          ),
-                                        ),
-                                        titlesData: flTileData,
-                                        borderData: FlBorderData(show: false),
-                                        minX: 2,
-                                        maxX: (childrenDataList.length + 1)
-                                            .toDouble(),
-                                        minY: 0,
-                                        maxY: childrenMax * 1.5,
-                                        lineBarsData: lineChartBarData,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomText(
+                                      text: "NUMBER OF CHILDREN",
+                                      padding: const EdgeInsets.only(
+                                        right: 16,
+                                        left: 16,
+                                        top: 20,
+                                      ),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      height: ch,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                        horizontal: 16,
+                                      ),
+                                      child: LineChart(
+                                        LineChartData(
+                                          showingTooltipIndicators:
+                                              showIndexes.map((index) {
+                                            return ShowingTooltipIndicators([
+                                              LineBarSpot(
+                                                tooltipsOnBar,
+                                                lineChartBarData
+                                                    .indexOf(tooltipsOnBar),
+                                                tooltipsOnBar.spots[index],
+                                              ),
+                                            ]);
+                                          }).toList(),
+                                          gridData: FlGridData(show: false),
+                                          lineTouchData: LineTouchData(
+                                            getTouchLineEnd: (data, index) => 0,
+                                            getTouchedSpotIndicator: (barData,
+                                                List<int> spotIndexes) {
+                                              return spotIndexes
+                                                  .map((spotIndex) {})
+                                                  .toList();
+                                            },
+                                            enabled: true,
+                                            touchTooltipData:
+                                                LineTouchTooltipData(
+                                              tooltipBgColor:
+                                                  const Color(0xff602bf8),
+                                              tooltipRoundedRadius: 5,
+                                              tooltipPadding:
+                                                  const EdgeInsets.all(4),
+                                              getTooltipItems:
+                                                  (List<LineBarSpot>
+                                                      lineBarsSpot) {
+                                                return lineBarsSpot
+                                                    .map((lineBarSpot) {
+                                                  return LineTooltipItem(
+                                                    lineBarSpot.y
+                                                        .toInt()
+                                                        .toString(),
+                                                    const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                    ),
+                                                  );
+                                                }).toList();
+                                              },
+                                            ),
+                                          ),
+                                          titlesData: flTileData,
+                                          borderData: FlBorderData(show: false),
+                                          minX: 2,
+                                          maxX: (childrenDataList.length + 1)
+                                              .toDouble(),
+                                          minY: 0,
+                                          maxY: childrenMax * 1.5,
+                                          lineBarsData: lineChartBarData,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 }
                 return const SizedBox();
@@ -934,16 +962,28 @@ class _HomeState extends State<Home> {
                     rightTitles:
                         AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   );
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(32),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: ValueListenableBuilder(
-                          valueListenable: AppNotifier.backgroundPrefDataVn,
-                          builder: (_, String value, Widget? child) {
-                            return Material(
+                  return ValueListenableBuilder(
+                    valueListenable: AppNotifier.backgroundPrefDataVn,
+                    builder: (_, String value, Widget? child) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            value == ""
+                                ? BoxShadow(
+                                    offset: const Offset(1, 1),
+                                    color: Theme.of(context).shadowColor,
+                                    spreadRadius: 1,
+                                    blurRadius: 35,
+                                  )
+                                : const BoxShadow(color: Colors.transparent),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Material(
                               elevation: 10,
                               borderRadius: BorderRadius.circular(12.0),
                               color: Theme.of(context).cardColor.withOpacity(
@@ -1010,11 +1050,11 @@ class _HomeState extends State<Home> {
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 }
                 return const SizedBox();
@@ -1098,16 +1138,28 @@ class _HomeState extends State<Home> {
                     rightTitles:
                         AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   );
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(32),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: ValueListenableBuilder(
-                          valueListenable: AppNotifier.backgroundPrefDataVn,
-                          builder: (_, String value, Widget? child) {
-                            return Material(
+                  return ValueListenableBuilder(
+                    valueListenable: AppNotifier.backgroundPrefDataVn,
+                    builder: (_, String value, Widget? child) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            value == ""
+                                ? BoxShadow(
+                                    offset: const Offset(1, 1),
+                                    color: Theme.of(context).shadowColor,
+                                    spreadRadius: 1,
+                                    blurRadius: 35,
+                                  )
+                                : const BoxShadow(color: Colors.transparent),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(32),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Material(
                               elevation: 10,
                               borderRadius: BorderRadius.circular(12.0),
                               color: Theme.of(context).cardColor.withOpacity(
@@ -1148,11 +1200,11 @@ class _HomeState extends State<Home> {
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 }
                 return const SizedBox();

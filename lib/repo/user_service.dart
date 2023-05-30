@@ -3,7 +3,6 @@ import 'package:http/http.dart';
 import 'package:nigerian_widows/repo/api_status.dart';
 
 import '../models/WidowData.dart';
-import '../models/WidowsData.dart';
 import '../util/app_constants.dart';
 
 class UserServices {
@@ -38,12 +37,13 @@ class UserServices {
     }
   }
 
-  static Future<Object> getWidowsData() async {
+  static Future<Object> getWidowsData({int input = -1}) async {
     Response response = await http.get(
       Uri.parse(
         'https://us-central1-ondo-widows-f2964.cloudfunctions.net/allWidows',
       ),
     );
+
     if (response.statusCode == AppConstants.SUCCESS) {
       return APIResponse(
         code: AppConstants.SUCCESS,

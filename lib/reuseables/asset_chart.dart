@@ -32,23 +32,33 @@ class AssetChat extends StatelessWidget {
 
     double cw = width * rootAspectRatio;
     double ch = cw / aspectRatio;
-    return SizedBox(
-      width: cw,
-      height: ch,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: ValueListenableBuilder(
-              valueListenable: AppNotifier.backgroundPrefDataVn,
-              builder: (BuildContext context, String value, Widget? child) {
-                return Material(
+    return ValueListenableBuilder(
+      valueListenable: AppNotifier.backgroundPrefDataVn,
+      builder: (BuildContext context, String value, Widget? child) {
+        return Container(
+          decoration:   BoxDecoration(
+            boxShadow: [
+              value == "" ? BoxShadow(
+                offset: const Offset(1, 1),
+                color: Theme.of(context).shadowColor,
+                spreadRadius:1,
+                blurRadius: 35,
+              ): const BoxShadow(color: Colors.transparent),
+            ],
+          ),
+          width: cw,
+          height: ch,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Material(
                   elevation: 10,
                   color: Theme.of(context).cardColor.withOpacity(
-                        value != "" ? .3 : 1,
-                      ),
+                    value != "" ? .3 : 1,
+                  ),
                   clipBehavior: Clip.hardEdge,
                   borderRadius: BorderRadius.circular(18.0),
                   child: Stack(
@@ -79,12 +89,12 @@ class AssetChat extends StatelessWidget {
                           width: cw, height: ch, fit: BoxFit.fill, wavePath),
                     ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

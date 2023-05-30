@@ -87,91 +87,103 @@ class _CustomPieGraphState extends State<CustomPieGraph> {
       countNgo++;
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(32),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: ValueListenableBuilder(
-          valueListenable: AppNotifier.backgroundPrefDataVn,
-          builder: (_, String value, Widget? child) {
-            return Material(
-              elevation: 50,
-              color: Theme.of(context).cardColor.withOpacity(
-                    value != "" ? .5 : 1,
-                  ),
-              borderRadius: BorderRadius.circular(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  widget.legendText.text == ""
-                      ? const SizedBox()
-                      : widget.legendText,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: SizedBox(
-                          height: 220,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Positioned(child: widget.centerText),
-                              PieChart(
-                                PieChartData(
-                                  pieTouchData: PieTouchData(
-                                    touchCallback:
-                                        (FlTouchEvent event, pieTouchResponse) {
-                                      setState(() {
-                                        if (!event
-                                                .isInterestedForInteractions ||
-                                            pieTouchResponse == null ||
-                                            pieTouchResponse.touchedSection ==
-                                                null) {
-                                          touchedIndex = -1;
-                                          return;
-                                        }
-                                        touchedIndex = pieTouchResponse
-                                            .touchedSection!
-                                            .touchedSectionIndex;
-                                      });
-                                    },
+    return ValueListenableBuilder(
+      valueListenable: AppNotifier.backgroundPrefDataVn,
+      builder: (BuildContext context, String value, Widget? child) {
+        return Container(
+          decoration:   BoxDecoration(
+            boxShadow: [
+              value == "" ? BoxShadow(
+                offset: const Offset(1, 1),
+                color: Theme.of(context).shadowColor,
+                spreadRadius:1,
+                blurRadius: 35,
+              ): const BoxShadow(color: Colors.transparent),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Material(
+                elevation: 50,
+                color: Theme.of(context).cardColor.withOpacity(
+                  value != "" ? .5 : 1,
+                ),
+                borderRadius: BorderRadius.circular(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    widget.legendText.text == ""
+                        ? const SizedBox()
+                        : widget.legendText,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: SizedBox(
+                            height: 220,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Positioned(child: widget.centerText),
+                                PieChart(
+                                  PieChartData(
+                                    pieTouchData: PieTouchData(
+                                      touchCallback:
+                                          (FlTouchEvent event, pieTouchResponse) {
+                                        setState(() {
+                                          if (!event
+                                              .isInterestedForInteractions ||
+                                              pieTouchResponse == null ||
+                                              pieTouchResponse.touchedSection ==
+                                                  null) {
+                                            touchedIndex = -1;
+                                            return;
+                                          }
+                                          touchedIndex = pieTouchResponse
+                                              .touchedSection!
+                                              .touchedSectionIndex;
+                                        });
+                                      },
+                                    ),
+                                    centerSpaceRadius: widget.centerSpaceRadius,
+                                    startDegreeOffset: 180,
+                                    borderData: FlBorderData(show: false),
+                                    sectionsSpace: 1,
+                                    sections: sectionsData,
                                   ),
-                                  centerSpaceRadius: widget.centerSpaceRadius,
-                                  startDegreeOffset: 180,
-                                  borderData: FlBorderData(show: false),
-                                  sectionsSpace: 1,
-                                  sections: sectionsData,
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: indicatorListVn,
-                        builder: (_, List<PieIndicators> indicatorList, __) {
-                          if (indicatorList.isEmpty) {
-                            return const SizedBox();
-                          }
-                          return Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: indicatorList,
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+                        ValueListenableBuilder(
+                          valueListenable: indicatorListVn,
+                          builder: (_, List<PieIndicators> indicatorList, __) {
+                            if (indicatorList.isEmpty) {
+                              return const SizedBox();
+                            }
+                            return Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: indicatorList,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ),
+          ),
+        );
+      },
     );
   }
 
