@@ -11,6 +11,7 @@ import '../util/app_constants.dart';
 class WidowsViewModel extends ChangeNotifier {
   bool _loading = false;
   WidowData _widowModel = WidowData();
+  WidowData _nextWidowModel = WidowData();
   bool _success = false;
   int _pagesCount = 0;
   int _pagesCurrent = 1;
@@ -23,6 +24,8 @@ class WidowsViewModel extends ChangeNotifier {
   bool get loading => _loading;
 
   WidowData get widowModel => _widowModel;
+
+  WidowData get nextWidowModel => _nextWidowModel;
 
   bool get success => _success;
 
@@ -92,12 +95,48 @@ class WidowsViewModel extends ChangeNotifier {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _widowModel = data;
       _lastPageIndex = _widowModel.lastIndex!;
+      double currentPage = lastIndexToPageNumber(_nextWidowModel.lastIndex!);
+      _smartPageIndex(currentPage.toInt(), 0, false);
       setLoading(false);
       setSuccess(true);
+      getNextData(index: _lastPageIndex);
     } else {
       setLoading(false);
       setSuccess(false);
     }
+  }
+
+  getNextData({int index = -1}) async {
+    _nextWidowModel = WidowData();
+    var response = await UserServices.getMoreWidowsData(
+      input: index,
+    ) as APIResponse;
+    if (response.code == AppConstants.SUCCESS) {
+      WidowData data = WidowData.fromJson(jsonDecode(response.response));
+      _nextWidowModel = data;
+      double nextIndex = lastIndexToPageNumber(_nextWidowModel.lastIndex!);
+      _smartPageIndex(_lastPageIndex, 0, false);
+      setSuccess(true);
+    } else {
+      setSuccess(false);
+    }
+  }
+
+  _smartPageIndex(int current, int next, bool nextSuccess) {
+    if(nextSuccess == true) {
+      if (current == 1 && nextSuccess) {
+        _pageIndexView = ["$current", "$next", "...", ">>"];
+      } else {
+        _pageIndexView = ["${current - 1}", "$current", "$next", "...", ">>"];
+      }
+    } else {
+      if (current == 1) {
+        _pageIndexView = ["$current", "...", ">>"];
+      } else {
+        _pageIndexView = ["${current - 1}", "$current", "...", ">>"];
+      }
+    }
+    AppNotifier.selectedPageVn.value = current;
   }
 
   setPageIndex(String p) {
@@ -158,7 +197,7 @@ class WidowsViewModel extends ChangeNotifier {
     //getPageData(pagesCurrent);
   }
 
-  lastIndexToPageNumber(int lastPageIndex) {
-    double pageNumber = lastPageIndex / 17;
+  double lastIndexToPageNumber(int lastPageIndex) {
+    return lastPageIndex / 17;
   }
 }
