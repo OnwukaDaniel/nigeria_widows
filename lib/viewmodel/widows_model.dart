@@ -60,32 +60,6 @@ class WidowsViewModel extends ChangeNotifier {
     _pagesCount = input;
   }
 
-  getWidowsData() async {
-    setLoading(true);
-    var response = await UserServices.getWidowsData() as APIResponse;
-    if (response.code == AppConstants.SUCCESS) {
-      WidowData data = WidowData.fromJson(jsonDecode(response.response));
-      _widowModel = data;
-      var pageCount = ((data.lastIndex! + 1) / countPerPage).round();
-      if (pageCount >= 1) {
-        setPages(pageCount.toInt());
-        var list = {
-          for (int i = 1; i <= pageCount; i++) i > 3 ? "..." : i.toString()
-        }.toList();
-        if (list.length > 3) list.add(">>");
-        _pageIndexView = list;
-      } else {
-        setPages(1);
-      }
-      _specificPageData = data.data!;
-      setLoading(false);
-      setSuccess(true);
-    } else {
-      setLoading(false);
-      setSuccess(false);
-    }
-  }
-
   getMoreWidowsData({int index = -1}) async {
     setLoading(true);
     var response = await UserServices.getMoreWidowsData(
@@ -95,18 +69,18 @@ class WidowsViewModel extends ChangeNotifier {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _widowModel = data;
       _lastPageIndex = _widowModel.lastIndex!;
-      double currentPage = lastIndexToPageNumber(_nextWidowModel.lastIndex!);
-      _smartPageIndex(currentPage.toInt(), 0, false);
+      double currentIndex = _lastIndexToPageNumber(_widowModel.lastIndex!);
+      _smartPageIndex(currentIndex.toInt(), 0, false);
       setLoading(false);
       setSuccess(true);
-      getNextData(index: _lastPageIndex);
+      _getNextData(currentIndex.toInt(), index: _lastPageIndex);
     } else {
       setLoading(false);
       setSuccess(false);
     }
   }
 
-  getNextData({int index = -1}) async {
+  _getNextData(int currentIndex, {int index = -1}) async {
     _nextWidowModel = WidowData();
     var response = await UserServices.getMoreWidowsData(
       input: index,
@@ -114,16 +88,18 @@ class WidowsViewModel extends ChangeNotifier {
     if (response.code == AppConstants.SUCCESS) {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _nextWidowModel = data;
-      double nextIndex = lastIndexToPageNumber(_nextWidowModel.lastIndex!);
-      _smartPageIndex(_lastPageIndex, 0, false);
+      print("Next model ******************** ${_nextWidowModel.data}");
+      double nextIndex = _lastIndexToPageNumber(_nextWidowModel.lastIndex!);
+      _smartPageIndex(currentIndex, nextIndex.toInt(), false);
       setSuccess(true);
     } else {
+      print("Next model ******************** false");
       setSuccess(false);
     }
   }
 
   _smartPageIndex(int current, int next, bool nextSuccess) {
-    if(nextSuccess == true) {
+    if (nextSuccess == true) {
       if (current == 1 && nextSuccess) {
         _pageIndexView = ["$current", "$next", "...", ">>"];
       } else {
@@ -139,65 +115,7 @@ class WidowsViewModel extends ChangeNotifier {
     AppNotifier.selectedPageVn.value = current;
   }
 
-  setPageIndex(String p) {
-    try {
-      _formatPageIndex(int.parse(p));
-    } catch (e) {
-      if (p == "<<") {
-        _formatPageIndex(AppNotifier.selectedPageVn.value - 1);
-      }
-      if (p == ">>") {
-        _formatPageIndex(AppNotifier.selectedPageVn.value + 1);
-      }
-    }
-    notifyListeners();
-  }
-
-  _formatPageIndex(int pagesCurrent) {
-    var first = pagesCurrent - 1;
-    var second = pagesCurrent + 1;
-    if (pagesCurrent == 1) {
-      var list = {
-        for (int i = 1; i <= _pagesCount; i++) i > 3 ? "..." : i.toString()
-      }.toList();
-      if (list.length > 3) list.add(">>");
-      _pageIndexView = list;
-    } else {
-      List<String> list = [];
-      for (int i = 1; i <= _pagesCount; i++) {
-        if (_pagesCount > 3) {
-          if (i == 1) {
-            if (i != first) {
-              list.add("<<");
-            } else {
-              list.add(i.toString());
-            }
-          } else if (i == first && first > 0) {
-            list.add(first.toString());
-          } else if (i == pagesCurrent) {
-            list.add(pagesCurrent.toString());
-          } else if (i == second && second <= _pagesCount) {
-            list.add(second.toString());
-          } else if (i == _pagesCount && pagesCurrent != _pagesCount) {
-            //final
-            //list.add(i.toString());
-            list.add("...");
-            list.add(">>");
-          } else if (i == _pagesCount && pagesCurrent == _pagesCount) {
-            //final
-            list.add(i.toString());
-          }
-        } else {
-          list.add(i.toString());
-        }
-      }
-      _pageIndexView = list;
-    }
-    AppNotifier.selectedPageVn.value = pagesCurrent;
-    //getPageData(pagesCurrent);
-  }
-
-  double lastIndexToPageNumber(int lastPageIndex) {
+  double _lastIndexToPageNumber(int lastPageIndex) {
     return lastPageIndex / 17;
   }
 }

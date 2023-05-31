@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:nigerian_widows/models/HomePageData.dart';
 import 'package:nigerian_widows/screens/transistion/RightToLeft.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/viewmodel/users_view_model.dart';
@@ -123,10 +124,16 @@ class _WidowsDataState extends State<WidowsData> {
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           AppNotifier.toolbarTitleVn.value = "Widow's data";
         });
+        var cData = context.read<WidowsViewModel>().widowModel.data;
+        var pData = context.read<WidowsViewModel>().nextWidowModel.data;
+
+        var dataList = pData.isEmpty == true? cData: pData;
+
+
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
-          itemCount: context.read<WidowsViewModel>().widowModel.data!.length,
+          itemCount: dataList.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 4,
@@ -137,7 +144,7 @@ class _WidowsDataState extends State<WidowsData> {
             double font = 9;
             int countPerPage = context.read<WidowsViewModel>().countPerPage;
             int pageNumber = context.read<WidowsViewModel>().pagesCurrent;
-            var data = context.read<WidowsViewModel>().widowModel.data![index];
+            var data = dataList[index];
 
             var img =
                 "assets/widow_images/profile${(pageNumber - 1) * countPerPage + index + 1}.png";
@@ -279,12 +286,16 @@ class _WidowsDataState extends State<WidowsData> {
                                 : Colors.transparent,
                           );
                         }
+                        var cData = context.read<WidowsViewModel>().widowModel.data;
+                        var pData = context.read<WidowsViewModel>().nextWidowModel.data;
+
+                        var dataList = pData.isEmpty == true? cData: pData;
 
                         return GestureDetector(
                           onTap: () {
                             context
                                 .read<WidowsViewModel>()
-                                .setPageIndex(value[index]);
+                                .getMoreWidowsData();
                           },
                           child: Container(
                             width: boxDim,

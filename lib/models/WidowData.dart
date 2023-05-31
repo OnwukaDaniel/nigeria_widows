@@ -1,6 +1,6 @@
 class WidowData {
   Date? date;
-  List<Data>? data;
+  List<Data> data = [];
   int? lastIndex;
   String? message;
   String? status;
@@ -8,7 +8,7 @@ class WidowData {
 
   WidowData(
       {this.date,
-      this.data,
+      this.data =  const [],
       this.lastIndex,
       this.message,
       this.status,
@@ -19,7 +19,7 @@ class WidowData {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data.add(Data.fromJson(v));
       });
     }
     lastIndex = json['lastIndex'];
@@ -34,7 +34,7 @@ class WidowData {
       data['date'] = date!.toJson();
     }
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data.map((v) => v.toJson()).toList();
     }
     data['lastIndex'] = lastIndex;
     data['message'] = message;
