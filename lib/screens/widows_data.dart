@@ -290,12 +290,14 @@ class _WidowsDataState extends State<WidowsData> {
                         var pData = context.read<WidowsViewModel>().nextWidowModel.data;
 
                         var dataList = pData.isEmpty == true? cData: pData;
+                        var lastPageIndex = context
+                            .watch<WidowsViewModel>().lastPageIndex;
 
                         return GestureDetector(
                           onTap: () {
                             context
                                 .read<WidowsViewModel>()
-                                .getMoreWidowsData();
+                                .getMoreWidowsData(index: lastPageIndex);
                           },
                           child: Container(
                             width: boxDim,
