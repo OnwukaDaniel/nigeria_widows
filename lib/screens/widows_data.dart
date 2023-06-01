@@ -216,7 +216,7 @@ class _WidowsDataState extends State<WidowsData> {
   }
 
   _bottomPageView(WidowsViewModel widowsViewModel) {
-    var value = widowsViewModel.pageIndexView;
+    var value = context.watch<WidowsViewModel>().pageIndexView;
     if (widowsViewModel.pageIndexView.isEmpty) value = ["1"];
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,

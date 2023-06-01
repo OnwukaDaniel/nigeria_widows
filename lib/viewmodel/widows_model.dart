@@ -70,7 +70,7 @@ class WidowsViewModel extends ChangeNotifier {
       _widowModel = data;
       _lastPageIndex = _widowModel.lastIndex!;
       double currentIndex = _lastIndexToPageNumber(_widowModel.lastIndex!);
-      _smartPageIndex(currentIndex.toInt(), 0, false);
+      _smartPageIndex(currentIndex.toInt(), 2, true);
       setLoading(false);
       setSuccess(true);
       _getNextData(currentIndex.toInt(), index: _lastPageIndex);
@@ -88,12 +88,11 @@ class WidowsViewModel extends ChangeNotifier {
     if (response.code == AppConstants.SUCCESS) {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _nextWidowModel = data;
-      print("Next model ******************** ${_nextWidowModel.data}");
       double nextIndex = _lastIndexToPageNumber(_nextWidowModel.lastIndex!);
-      _smartPageIndex(currentIndex, nextIndex.toInt(), false);
+      _smartPageIndex(currentIndex, nextIndex.toInt(), true);
+      notifyListeners();
       setSuccess(true);
     } else {
-      print("Next model ******************** false");
       setSuccess(false);
     }
   }
@@ -112,6 +111,7 @@ class WidowsViewModel extends ChangeNotifier {
         _pageIndexView = ["${current - 1}", "$current", "...", ">>"];
       }
     }
+    print("Next model ****** $current ******$next **** $nextSuccess **** $_pageIndexView");
     AppNotifier.selectedPageVn.value = current;
   }
 
