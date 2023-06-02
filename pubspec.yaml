@@ -20,6 +20,8 @@ dependencies:
   particles_flutter: ^0.1.4
   particle_field: ^1.0.0
   rnd: ^0.2.0
+  riverpod: ^2.3.6
+  flutter_riverpod: ^2.3.6
 
 dev_dependencies:
   flutter_test:

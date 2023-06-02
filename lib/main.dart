@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nigerian_widows/screens/home2.dart';
 import 'package:nigerian_widows/screens/settings/homepage_background.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
@@ -16,10 +17,11 @@ import 'screens/landing.dart';
 import 'screens/settings.dart';
 import 'screens/widows_data.dart';
 import 'viewmodel/paging_view_model.dart';
+import 'package:riverpod/riverpod.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -47,31 +49,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UsersViewModel()),
-        ChangeNotifierProvider(create: (_) => PagingViewModel()),
-        ChangeNotifierProvider(create: (_) => ChartViewModel()),
-        ChangeNotifierProvider(create: (_) => WidowsViewModel()),
-      ],
-      child: ValueListenableBuilder(
-        valueListenable: AppNotifier.appTheme,
-        builder: (BuildContext context, ThemeData value, Widget? child) {
-          return MaterialApp(
-            title: 'Nigerian Widows',
-            debugShowCheckedModeBanner: false,
-            theme: value,
-            home: const SplashScreen(),
-            routes: {
-              Home.id: (ctx) => const Home(),
-              Settings.id: (ctx) => const Settings(),
-              Landing.id: (ctx) => const Landing(),
-              WidowsData.id: (ctx) => const WidowsData(),
-              HomePageBackground.id: (ctx) => const HomePageBackground(),
-            },
-          );
-        },
-      ),
+    return ValueListenableBuilder(
+      valueListenable: AppNotifier.appTheme,
+      builder: (BuildContext context, ThemeData value, Widget? child) {
+        return MaterialApp(
+          title: 'Nigerian Widows',
+          debugShowCheckedModeBanner: false,
+          theme: value,
+          home: const SplashScreen(),
+          routes: {
+            Home.id: (ctx) => const Home(),
+            Settings.id: (ctx) => const Settings(),
+            Landing.id: (ctx) => const Landing(),
+            WidowsData.id: (ctx) => const WidowsData(),
+            HomePageBackground.id: (ctx) => const HomePageBackground(),
+          },
+        );
+      },
     );
   }
 }

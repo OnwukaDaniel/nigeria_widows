@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nigerian_widows/providers/widow_data_provider.dart';
 import 'package:nigerian_widows/screens/transistion/RightToLeft.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/viewmodel/users_view_model.dart';
@@ -11,29 +13,20 @@ import '../sharednotifiers/app.dart';
 import '../viewmodel/widows_model.dart';
 import 'WidowProfile.dart';
 
-class WidowsData extends StatefulWidget {
+class WidowsData extends ConsumerWidget {
   static const String id = "WidowsData";
+  final double bottomBarHeight = 60;
 
   const WidowsData({Key? key}) : super(key: key);
 
   @override
-  State<WidowsData> createState() => _WidowsDataState();
-}
+  Widget build(BuildContext context, ref) {
+    final widowsData = ref.watch(widowDataProvider);
+    ref.read(widowDataProvider)
 
-class _WidowsDataState extends State<WidowsData> {
-  double bottomBarHeight = 60;
-
-  @override
-  void initState() {
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       AppNotifier.toolbarTitleVn.value = "Widow's data";
     });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    UsersViewModel usersViewModel = context.watch<UsersViewModel>();
     WidowsViewModel widowsViewModel = context.watch<WidowsViewModel>();
 
     return Scaffold(
@@ -45,6 +38,22 @@ class _WidowsDataState extends State<WidowsData> {
             physics: const BouncingScrollPhysics(),
             children: [
               const SizedBox(height: 16),
+              widowsData.when(
+                data: (data) {
+
+                },
+                error: (error, stackTrace) {
+                  return Center(
+                    child: Text(
+                      error.toString(),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color,
+                      ),
+                    ),
+                  );
+                },
+                loading: myShimmer(),
+              ),
               _ui2(widowsViewModel),
               SizedBox(height: bottomBarHeight),
             ],
@@ -52,6 +61,67 @@ class _WidowsDataState extends State<WidowsData> {
           _bottomPageView(widowsViewModel),
         ],
       ),
+    );
+  }
+
+  myShimmer() {
+    return GridView.builder(
+      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 15,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 4,
+        mainAxisSpacing: 4,
+        mainAxisExtent: 238,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        double font = 9;
+
+        return Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Icon(
+                  Icons.account_circle_outlined,
+                  color: Theme.of(context).textTheme.bodyText1!.color,
+                  size: 100,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const DetailItem(data1: "Name ", data2: "-----"),
+              const SizedBox(height: 4),
+              const DetailItem(data1: "Date of birth ", data2: "-----"),
+              const SizedBox(height: 4),
+              const DetailItem(data1: "Address ", data2: "-----"),
+              const SizedBox(height: 4),
+              const DetailItem(data1: "Phone ", data2: "-----"),
+              const SizedBox(height: 4),
+              const DetailItem(data1: "State ", data2: "-----"),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "......",
+                    style: TextStyle(
+                      fontSize: font + 1,
+                      color: AppColor.appColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -63,7 +133,7 @@ class _WidowsDataState extends State<WidowsData> {
       return GridView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
-        itemCount: 20,
+        itemCount: 15,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 4,
@@ -295,7 +365,7 @@ class _WidowsDataState extends State<WidowsData> {
 
                         return GestureDetector(
                           onTap: () {
-                            if(s == ">>"){
+                            if (s == ">>") {
                               context
                                   .read<WidowsViewModel>()
                                   .getWidowsData(index: lastPageIndex);
@@ -303,12 +373,12 @@ class _WidowsDataState extends State<WidowsData> {
                               double lastPageDouble = context
                                   .read<WidowsViewModel>()
                                   .pageNumberToLastPageIndex(int.parse(s));
-                              print("Index ******************* $lastPageDouble");
+                              print(
+                                  "Index ******************* $lastPageDouble");
                               context
                                   .read<WidowsViewModel>()
                                   .getWidowsData(index: lastPageDouble.toInt());
                             }
-
                           },
                           child: Container(
                             width: boxDim,
