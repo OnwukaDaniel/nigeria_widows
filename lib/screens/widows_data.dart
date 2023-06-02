@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:nigerian_widows/models/HomePageData.dart';
 import 'package:nigerian_widows/screens/transistion/RightToLeft.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/viewmodel/users_view_model.dart';
@@ -127,8 +126,7 @@ class _WidowsDataState extends State<WidowsData> {
         var cData = context.read<WidowsViewModel>().widowModel.data;
         var pData = context.read<WidowsViewModel>().nextWidowModel.data;
 
-        var dataList = pData.isEmpty == true? cData: pData;
-
+        var dataList = pData.isEmpty == true ? cData : pData;
 
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
@@ -286,18 +284,31 @@ class _WidowsDataState extends State<WidowsData> {
                                 : Colors.transparent,
                           );
                         }
-                        var cData = context.read<WidowsViewModel>().widowModel.data;
-                        var pData = context.read<WidowsViewModel>().nextWidowModel.data;
+                        var cData =
+                            context.read<WidowsViewModel>().widowModel.data;
+                        var pData =
+                            context.read<WidowsViewModel>().nextWidowModel.data;
 
-                        var dataList = pData.isEmpty == true? cData: pData;
-                        var lastPageIndex = context
-                            .watch<WidowsViewModel>().lastPageIndex;
+                        var dataList = pData.isEmpty == true ? cData : pData;
+                        var lastPageIndex =
+                            context.watch<WidowsViewModel>().lastPageIndex;
 
                         return GestureDetector(
                           onTap: () {
-                            context
-                                .read<WidowsViewModel>()
-                                .getMoreWidowsData(index: lastPageIndex);
+                            if(s == ">>"){
+                              context
+                                  .read<WidowsViewModel>()
+                                  .getWidowsData(index: lastPageIndex);
+                            } else {
+                              double lastPageDouble = context
+                                  .read<WidowsViewModel>()
+                                  .pageNumberToLastPageIndex(int.parse(s));
+                              print("Index ******************* $lastPageDouble");
+                              context
+                                  .read<WidowsViewModel>()
+                                  .getWidowsData(index: lastPageDouble.toInt());
+                            }
+
                           },
                           child: Container(
                             width: boxDim,

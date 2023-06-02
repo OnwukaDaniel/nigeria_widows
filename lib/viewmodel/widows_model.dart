@@ -17,7 +17,7 @@ class WidowsViewModel extends ChangeNotifier {
   int _pagesCurrent = 1;
   int _lastPageIndex = -1;
   int countPerPage = 6;
-  List<String> _pageIndexView = [];
+  List<String> _pageIndexList = [];
 
   List<Data> _specificPageData = [];
 
@@ -37,10 +37,10 @@ class WidowsViewModel extends ChangeNotifier {
 
   List<Data> get specificPageData => _specificPageData;
 
-  List<String> get pageIndexView => _pageIndexView;
+  List<String> get pageIndexView => _pageIndexList;
 
   WidowsViewModel() {
-    getMoreWidowsData();
+    getWidowsData();
   }
 
   setLoading(bool loading) async {
@@ -60,7 +60,7 @@ class WidowsViewModel extends ChangeNotifier {
     _pagesCount = input;
   }
 
-  getMoreWidowsData({int index = -1}) async {
+  getWidowsData({int index = -1}) async {
     setLoading(true);
     var response = await UserServices.getMoreWidowsData(
       input: index,
@@ -70,7 +70,7 @@ class WidowsViewModel extends ChangeNotifier {
       _widowModel = data;
       _lastPageIndex = _widowModel.lastIndex!;
       double currentIndex = _lastIndexToPageNumber(_widowModel.lastIndex!);
-      _smartPageIndex(currentIndex.toInt(), 2, true);
+      _smartPageIndex(currentIndex.toInt(), currentIndex.toInt() + 1, true);
       setLoading(false);
       setSuccess(true);
       _getNextData(currentIndex.toInt(), index: _lastPageIndex);
@@ -100,22 +100,26 @@ class WidowsViewModel extends ChangeNotifier {
   _smartPageIndex(int current, int next, bool nextSuccess) {
     if (nextSuccess == true) {
       if (current == 1 && nextSuccess) {
-        _pageIndexView = ["$current", "$next", "...", ">>"];
-      } else {
-        _pageIndexView = ["${current - 1}", "$current", "$next", "...", ">>"];
+        _pageIndexList = ["$current", "$next", "...", ">>"];
+      } else if(current != 1 && nextSuccess) {
+        _pageIndexList = ["${current - 1}", "$current", "$next", "...", ">>"];
       }
     } else {
       if (current == 1) {
-        _pageIndexView = ["$current", "...", ">>"];
+        _pageIndexList = ["$current", "...", ">>"];
       } else {
-        _pageIndexView = ["${current - 1}", "$current", "...", ">>"];
+        _pageIndexList = ["${current - 1}", "$current", "...", ">>"];
       }
     }
-    print("Next model ****** $current ******$next **** $nextSuccess **** $_pageIndexView");
+    print("Next model ****** $current ******$next **** $nextSuccess **** $_pageIndexList");
     AppNotifier.selectedPageVn.value = current;
   }
 
   double _lastIndexToPageNumber(int lastPageIndex) {
     return lastPageIndex / 17;
+  }
+
+  double pageNumberToLastPageIndex(int lastPageIndex) {
+    return lastPageIndex * 17;
   }
 }
