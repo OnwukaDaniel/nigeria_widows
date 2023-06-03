@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:nigerian_widows/screens/home2.dart';
+import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/settings.dart';
 import 'package:nigerian_widows/screens/widows_landing.dart';
 import 'package:nigerian_widows/util/app_color.dart';

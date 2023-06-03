@@ -2,107 +2,18 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:particle_field/particle_field.dart';
+import 'package:particles_flutter/particles_flutter.dart';
 import 'package:rnd/rnd.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/DataModel.dart';
-import '../models/HomePageData.dart';
-import '../reuseables/value_notifiers.dart';
 import '../sharednotifiers/app.dart';
-
-const Color light = Color(0xfff2f2ff);
-const Color normal = Color(0xff64caad);
-const Color dark = Color(0xff602bfa);
-
-List<Color> gradientColors = [
-  const Color(0xff7948ff),
-  const Color(0xffa08ae1),
-  const Color(0xffffffff),
-];
-
-final List<Color> ngoColor = [
-  const Color(0xFFADA5C2),
-  const Color(0xFF602BF8),
-];
-
-final List<Color> empColor = [
-  const Color(0xFF723EFF),
-  const Color(0xFFDC950A),
-  const Color(0xFF3EBFF6),
-  const Color(0xFFFDE567),
-  const Color(0xFF039CDD),
-  const Color(0xFF000000),
-];
-
-computeLga(List<BaseLocalGovtData> value) async {
-  List<BarChartGroupData> barLga = [];
-  List<String> lgaLegend = [];
-  List<int> values = [];
-  value.forEach((element) {
-    values.add(element.value);
-  });
-  double localGovtMax = values.reduce(max).toDouble();
-
-  for (BaseLocalGovtData x in value) {
-    BarChartRodData rod = BarChartRodData(
-      toY: localGovtMax,
-      rodStackItems: [
-        BarChartRodStackItem(0, x.value.toDouble(), dark),
-        BarChartRodStackItem(x.value.toDouble(), localGovtMax, light),
-      ],
-      borderRadius: BorderRadius.zero,
-    );
-    barLga.add(
-      BarChartGroupData(x: lgaLegend.length, barsSpace: 4, barRods: [rod]),
-    );
-    lgaGroupDataVn.value = barLga;
-    lgaLegend.add(x.title);
-  }
-  return [barLga, lgaLegend];
-}
-
-computeChildrenList(List<BaseLocalGovtData> value) {
-  List<FlSpot> childrenDataList = [];
-  List<String> childrenDataLegend = [];
-  List<int> values = [];
-  for (BaseLocalGovtData x in value) {
-    String title = x.title;
-    var split = title.split(" ");
-    title = "${split.first}\n${split.last}";
-    values.add(x.value);
-    var len = childrenDataList.length;
-    childrenDataList.add(FlSpot((len + 2).toDouble(), x.value.toDouble()));
-    childrenDataLegend.add(title);
-  }
-  return [childrenDataList, childrenDataLegend, values.reduce(max).toDouble()];
-}
-
-computeYearsInMarriage(List<BaseLocalGovtData> value) async {
-  List<int> values = [];
-  List<String> legend = [];
-
-  for (BaseLocalGovtData x in value) {
-    values.add(x.value);
-    legend.add(x.title);
-  }
-  return [values, legend];
-}
-
-computeOccupation(List<BaseLocalGovtData> value) async {
-  List<int> values = [];
-  List<String> legend = [];
-
-  for (BaseLocalGovtData x in value) {
-    values.add(x.value);
-    legend.add(x.title);
-  }
-  return [values, legend];
-}
+import '../util/app_constants.dart';
+import 'home/home_consumer.dart';
 
 class Home extends StatefulWidget {
   static const String id = "home";
@@ -128,7 +39,6 @@ class _HomeState extends State<Home> {
     var pref = await SharedPreferences.getInstance();
     var value = pref.getString("backgroundPrefData") ?? "";
     AppNotifier.backgroundPrefDataVn.value = value;
-    var decoded = decodeBackgroundFromString(value);
   }
 
   @override
@@ -150,7 +60,78 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-      body: SizedBox(),
+      body: Stack(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: AppNotifier.backgroundPrefDataVn,
+            builder: (_, String value, Widget? child) {
+              if (value == "") return const SizedBox();
+              BackgroundPrefData data = decodeBackgroundFromString(value);
+
+              if (data.identity == 2) {
+                return Container(
+                  clipBehavior: Clip.hardEdge,
+                  width: width,
+                  height: height,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ColoredBox(
+                    color: const Color(0xFF110018),
+                    child: cometParticles.stackBelow(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.menu,
+                              size: 20,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color,
+                            ),
+                            Text(
+                              AppConstants.appName,
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .color,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      scale: 1.1,
+                    ),
+                  ),
+                );
+              }
+              return Container(
+                color: AppConstants().constantsToColor(data.backgroundColor),
+                child: CircularParticle(
+                  isRandomColor: data.isRandomColor,
+                  width: width,
+                  height: height,
+                  awayRadius: data.awayRadius,
+                  numberOfParticles: data.numberOfParticles,
+                  speedOfParticles: data.speedOfParticles,
+                  maxParticleSize: data.maxParticleSize,
+                  particleColor: Colors.white.withOpacity(.7),
+                  awayAnimationDuration: const Duration(microseconds: 600),
+                  awayAnimationCurve: Curves.easeInOutBack,
+                  onTapAnimation: true,
+                  connectDots: data.connectDots,
+                  enableHover: true,
+                  hoverColor: Colors.black,
+                  hoverRadius: 90,
+                ),
+              );
+            },
+          ),
+          HomeConsumer(),
+        ],
+      ),
     );
   }
 

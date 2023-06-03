@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nigerian_widows/screens/home2.dart';
+import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/settings/homepage_background.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
