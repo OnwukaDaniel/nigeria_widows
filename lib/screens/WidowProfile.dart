@@ -383,9 +383,9 @@ class DetailItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 50),
-                        child: Expanded(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 50),
                           child: Text(
                             data2,
                             style: TextStyle(
