@@ -15,8 +15,7 @@ class CustomShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer(
       duration: const Duration(seconds: 13),
-      interval: const Duration(seconds: 5),
-      color: Colors.white,
+      color: Theme.of(context).textTheme.bodyText1!.color!,
       colorOpacity: 0,
       enabled: true,
       direction: const ShimmerDirection.fromLTRB(),

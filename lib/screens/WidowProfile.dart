@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nigerian_widows/util/app_color.dart';
+import 'package:nigerian_widows/util/app_constants.dart';
 
 import '../models/WidowData.dart';
+import 'HeroImageDetailScreen.dart';
 
 class WidowProfile extends StatefulWidget {
   static const String id = "WidowProfile";
@@ -35,14 +38,16 @@ class _WidowProfileState extends State<WidowProfile> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: AppBar(
               elevation: 0,
-              backgroundColor: Theme.of(context).backgroundColor.withOpacity(.5),
+              backgroundColor:
+                  Theme.of(context).backgroundColor.withOpacity(.5),
               title: Row(
                 children: [
                   Expanded(
                     child: Text(
                       "${widget.data.fullName}'s Profile",
                       overflow: TextOverflow.fade,
-                      style: TextStyle(color: Theme.of(context).textTheme.bodyText1!.color),
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1!.color),
                     ),
                   ),
                 ],
@@ -90,7 +95,10 @@ class _WidowProfileState extends State<WidowProfile> {
                               style: TextStyle(
                                 color: selectedData == 0
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color,
                               ),
                             ),
                           ),
@@ -160,12 +168,24 @@ class Personal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
-          child: CircleAvatar(
-            foregroundImage: AssetImage(image),
-            radius: 80,
+          child: InkWell(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => HeroImageDetailScreen(image: image),
+                ),
+              );
+            },
+            child: Hero(
+              tag: "profile image",
+              child: CircleAvatar(
+                foregroundImage: AssetImage(image),
+                radius: 80,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -220,12 +240,15 @@ class BankScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        DetailItem(data1: "Account Number", data2: data.accountName!),
-        DetailItem(data1: "Bank Name", data2: data.bankName!),
-        DetailItem(data1: "NGO membership", data2: data.ngoMembership!),
-        DetailItem(data1: "NGO name", data2: data.ngoName!),
-        DetailItem(data1: "Received By", data2: data.receivedBy),
-        DetailItem(data1: "Registration Date", data2: data.registrationDate!),
+        DetailItem(
+            data1: AppConstants.ACCOUNT_NUMBER,
+            data2: data.accountNumber ?? "Nil"),
+        DetailItem(data1: "Bank Name", data2: data.bankName ?? "Nil"),
+        DetailItem(data1: "NGO membership", data2: data.ngoMembership ?? "Nil"),
+        DetailItem(data1: "NGO name", data2: data.ngoName ?? "No NGO"),
+        DetailItem(data1: "Received By", data2: data.receivedBy ?? "Nil"),
+        DetailItem(
+            data1: "Registration Date", data2: data.registrationDate ?? "Nil"),
       ],
     );
   }
@@ -244,7 +267,7 @@ class DetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -256,15 +279,47 @@ class DetailItem extends StatelessWidget {
                 color: Theme.of(context).textTheme.bodyText1!.color,
               ),
             ),
-            const Spacer(),
-            Flexible(
-              child: Text(
-                data2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
+            const SizedBox(width: 14),
+            if (data1 == AppConstants.ACCOUNT_NUMBER && data2 != "Nil")
+              InkWell(
+                onTap: () {
+                  if (data2 != "Nil") {
+                    copyToClipboard(data2);
+                    showToast(context, 'Copied!');
+                  }
+                },
+                child: const Icon(
+                  Icons.copy,
                   color: Colors.grey,
+                ),
+              )
+            else
+              const SizedBox(),
+            Flexible(
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.black26.withOpacity(.5),
+                    builder: (BuildContext context) {
+                      return BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 10,
+                          sigmaY: 10,
+                        ),
+                        child: connectedDotsDialog(context, data1, data2),
+                      );
+                    },
+                  );
+                },
+                child: Text(
+                  data2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ),
@@ -274,6 +329,108 @@ class DetailItem extends StatelessWidget {
         const Divider(),
         const SizedBox(height: 14),
       ],
+    );
+  }
+
+  connectedDotsDialog(BuildContext context, String data1, String data2) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      runAlignment: WrapAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          alignment: Alignment.topCenter,
+          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(32),
+          ),
+          child: Material(
+            color: Theme.of(context).cardColor,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          data1,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyText1!.color,
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.close,
+                            color: Theme.of(context).textTheme.bodyText1!.color,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: Expanded(
+                          child: Text(
+                            data2,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context).textTheme.bodyText1!.color,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (data1 == AppConstants.ACCOUNT_NUMBER && data2 != "Nil")
+                        InkWell(
+                          onTap: () {
+                            if (data2 != "Nil") {
+                              copyToClipboard(data2);
+                            }
+                          },
+                          child: const Icon(
+                            Icons.copy,
+                            color: Colors.grey,
+                          ),
+                        )
+                      else
+                        const SizedBox(),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+  }
+
+  void showToast(BuildContext context, String message) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 }

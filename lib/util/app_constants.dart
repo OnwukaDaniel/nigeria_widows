@@ -39,4 +39,8 @@ class AppConstants {
     }
     return AppColor.brown;
   }
+
+  static double bottomBarHeight = 60;
+
+  static String ACCOUNT_NUMBER = "Account Number";
 }

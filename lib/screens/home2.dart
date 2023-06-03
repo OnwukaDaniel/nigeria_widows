@@ -6,23 +6,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:particle_field/particle_field.dart';
-import 'package:particles_flutter/particles_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:rnd/rnd.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/DataModel.dart';
 import '../models/HomePageData.dart';
-import '../reuseables/asset_chart.dart';
-import '../reuseables/bar_chart.dart';
-import '../reuseables/pie_chart.dart';
-import '../reuseables/resuable_text.dart';
 import '../reuseables/value_notifiers.dart';
 import '../sharednotifiers/app.dart';
-import '../util/app_constants.dart';
-import '../viewmodel/chart_view_model.dart';
 
 const Color light = Color(0xfff2f2ff);
 const Color normal = Color(0xff64caad);

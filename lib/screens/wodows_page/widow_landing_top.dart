@@ -6,6 +6,7 @@ import '../../models/WidowData.dart';
 import '../../sharednotifiers/app.dart';
 import '../../util/CustomShimmer.dart';
 import '../../util/app_color.dart';
+import '../../util/app_constants.dart';
 import '../WidowProfile.dart';
 import '../transistion/RightToLeft.dart';
 
@@ -114,44 +115,44 @@ class WidowLandingTop extends ConsumerWidget {
 
                   var img = "assets/widow_images/profile1.png";
 
-                  return Container(
-                    clipBehavior: Clip.hardEdge,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          img,
-                          height: 120,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                  return GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        RightToLeft(
+                          page: WidowProfile(
+                            data: data,
+                            image: img,
+                          ),
                         ),
-                        const SizedBox(height: 4),
-                        DetailItem(data1: "Name ", data2: data.fullName!),
-                        const SizedBox(height: 4),
-                        DetailItem(data1: "Date of birth ", data2: data.dob!),
-                        const SizedBox(height: 4),
-                        DetailItem(data1: "Address ", data2: data.address!),
-                        const SizedBox(height: 4),
-                        DetailItem(data1: "Phone ", data2: data.phoneNumber!),
-                        const SizedBox(height: 4),
-                        DetailItem(data1: "State ", data2: data.state!),
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              RightToLeft(
-                                page: WidowProfile(
-                                  data: data,
-                                  image: img,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
+                      );
+                    },
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            img,
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                          const SizedBox(height: 4),
+                          DetailItem(data1: "Name ", data2: data.fullName!),
+                          const SizedBox(height: 4),
+                          DetailItem(data1: "Date of birth ", data2: data.dob!),
+                          const SizedBox(height: 4),
+                          DetailItem(data1: "Address ", data2: data.address!),
+                          const SizedBox(height: 4),
+                          DetailItem(data1: "Phone ", data2: data.phoneNumber!),
+                          const SizedBox(height: 4),
+                          DetailItem(data1: "State ", data2: data.state!),
+                          const Spacer(),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
@@ -169,9 +170,9 @@ class WidowLandingTop extends ConsumerWidget {
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -179,6 +180,7 @@ class WidowLandingTop extends ConsumerWidget {
             );
           },
         ),
+        SizedBox(height: AppConstants.bottomBarHeight),
       ],
     );
   }
