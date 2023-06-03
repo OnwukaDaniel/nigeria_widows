@@ -1,15 +1,16 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:nigerian_widows/screens/home2.dart';
 import 'package:nigerian_widows/screens/settings.dart';
+import 'package:nigerian_widows/screens/widows_landing.dart';
 import 'package:nigerian_widows/util/app_color.dart';
 import 'package:nigerian_widows/util/app_constants.dart';
 
 import '../reuseables/resuable_text.dart';
 import '../sharednotifiers/app.dart';
-import 'widows_data.dart';
 
 class Landing extends StatefulWidget {
   static const String id = "Landing";
@@ -27,7 +28,7 @@ class _LandingState extends State<Landing> {
 
   List<Widget> fragments = [
     const Home(),
-    const WidowsData(),
+    const WidowsLanding(),
     const Settings(),
   ];
 
@@ -63,7 +64,7 @@ class _LandingState extends State<Landing> {
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: AppBar(
                     backgroundColor:
-                    Theme.of(context).backgroundColor.withOpacity(0.1),
+                        Theme.of(context).backgroundColor.withOpacity(0.1),
                     elevation: 0,
                     leading: InkWell(
                       onTap: () {
@@ -77,6 +78,46 @@ class _LandingState extends State<Landing> {
                     title: ValueListenableBuilder(
                       valueListenable: AppNotifier.toolbarTitleVn,
                       builder: (_, String value, Widget? child) {
+                        if (value == "Loading ...") {
+                          Duration speed = const Duration(milliseconds: 100);
+                          return Row(
+                            children: [
+                              Text(
+                                "Loading ",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 50,
+                                child: DefaultTextStyle(
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .color,
+                                    fontSize: 20,
+                                    fontFamily: 'Agne',
+                                  ),
+                                  child: AnimatedTextKit(
+                                    repeatForever: true,
+                                    pause: speed,
+                                    animatedTexts: [
+                                      TyperAnimatedText('.', speed: speed),
+                                      TyperAnimatedText('..', speed: speed),
+                                      TyperAnimatedText('...', speed: speed),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
                         return Text(
                           value,
                           style: TextStyle(
@@ -104,8 +145,7 @@ class _LandingState extends State<Landing> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Drawer(
-                  backgroundColor:
-                  Theme.of(context).cardColor.withOpacity(0.7),
+                  backgroundColor: Theme.of(context).cardColor.withOpacity(0.7),
                   width: width / 1.2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,8 +166,7 @@ class _LandingState extends State<Landing> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color:
-                            Theme.of(context).textTheme.bodyText1!.color,
+                            color: Theme.of(context).textTheme.bodyText1!.color,
                           ),
                         ),
                       ),

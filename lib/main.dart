@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/landing.dart';
 import 'screens/settings.dart';
 import 'screens/widows_data.dart';
-import 'viewmodel/paging_view_model.dart';
 import 'package:riverpod/riverpod.dart';
 
 void main() {
@@ -61,7 +60,6 @@ class _MyAppState extends State<MyApp> {
             Home.id: (ctx) => const Home(),
             Settings.id: (ctx) => const Settings(),
             Landing.id: (ctx) => const Landing(),
-            WidowsData.id: (ctx) => const WidowsData(),
             HomePageBackground.id: (ctx) => const HomePageBackground(),
           },
         );

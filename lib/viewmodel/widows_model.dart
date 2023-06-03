@@ -62,9 +62,7 @@ class WidowsViewModel extends ChangeNotifier {
 
   getWidowsData({int index = -1}) async {
     setLoading(true);
-    var response = await UserServices.getWidowsData(
-      input: index,
-    ) as APIResponse;
+    var response = await UserServices().getWidowsData(input: index);
     if (response.code == AppConstants.SUCCESS) {
       WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _widowModel = data;
@@ -82,11 +80,9 @@ class WidowsViewModel extends ChangeNotifier {
 
   _getNextData(int currentIndex, {int index = -1}) async {
     _nextWidowModel = WidowData();
-    var response = await UserServices.getWidowsData(
-      input: index,
-    ) as APIResponse;
+    var response = await UserServices().getWidowsData(input: index);
     if (response.code == AppConstants.SUCCESS) {
-      UserServicesUserServices data = WidowData.fromJson(jsonDecode(response.response));
+      WidowData data = WidowData.fromJson(jsonDecode(response.response));
       _nextWidowModel = data;
       double nextIndex = _lastIndexToPageNumber(_nextWidowModel.lastIndex!);
       _smartPageIndex(currentIndex, nextIndex.toInt(), true);

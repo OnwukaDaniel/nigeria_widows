@@ -23,7 +23,7 @@ class UserServices {
     return Future(() => Success(code: 200, response: result));
   }
 
-  static Future<Object> getChatData() async {
+  Future<APIResponse> getChatData() async {
     Response response = await http.get(
       Uri.parse(
         'https://us-central1-ondo-widows-f2964.cloudfunctions.net/homepageData',
@@ -62,5 +62,3 @@ class UserServices {
     }
   }
 }
-
-final userProvider = Provider<UserServices>((ref)=> UserServices());

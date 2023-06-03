@@ -15,7 +15,11 @@ class WidowData {
       this.statusCode});
 
   WidowData.fromJson(Map<String, dynamic> json) {
-    date = json['date'] != null ? Date.fromJson(json['date']) : null;
+    try{
+      date = json['date'] != null ? Date.fromJson(json['date']) : null;
+    } catch (e){
+      date = Date.fromJson({"_seconds": 1685806428, "_nanoseconds": 76000000});
+    }
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {

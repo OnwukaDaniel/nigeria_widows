@@ -22,6 +22,8 @@ dependencies:
   rnd: ^0.2.0
   riverpod: ^2.3.6
   flutter_riverpod: ^2.3.6
+  shimmer_animation: ^2.1.0+1
+  animated_text_kit: ^4.2.2
 
 dev_dependencies:
   flutter_test:
