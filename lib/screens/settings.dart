@@ -99,10 +99,10 @@ class _SettingsState extends State<Settings> {
                 );
               },
             ),
-            BackgroundChangeCard(
+            /*BackgroundChangeCard(
               text: "Widow's Page",
               onTap: () {},
-            ),
+            ),*/
             const SizedBox(height: 16),
             const SizedBox(height: 16),
           ],
