@@ -168,6 +168,7 @@ class Personal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
           child: InkWell(
@@ -197,7 +198,6 @@ class Personal extends StatelessWidget {
         DetailItem(data1: "State", data2: data.state!),
         DetailItem(data1: "HomeTown", data2: data.homeTown!),
         DetailItem(data1: "Local Government", data2: data.lga!),
-        const SizedBox(height: 16),
         Text(
           "Other Personal Details",
           style: TextStyle(
@@ -205,7 +205,9 @@ class Personal extends StatelessWidget {
             color: AppColor.appColor,
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 14),
+        const Divider(),
+        const SizedBox(height: 16),
         DetailItem(data1: "Husband's name", data2: data.husbandName!),
         DetailItem(
           data1: "Husband's Occupation",

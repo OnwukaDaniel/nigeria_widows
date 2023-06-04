@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:rnd/rnd.dart';
+
 import 'landing.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,8 +14,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  List<String> images = [];
+  Random rand = Random(42);
+
   @override
   void initState() {
+
     Timer(
       const Duration(seconds: 3),
       () async {
@@ -23,6 +31,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    for (int x = 1; x <= 5; x++) {
+      images.add("assets/widow_images/profile$x.png");
+    }
+    int randomInteger = rand.getInt(1, 31);
+    var img = images[randomInteger];
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Center(
@@ -30,18 +43,13 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/splash/african_woman.png",
-              width: 150,
-              height: 150,
-            ),
+            Image.asset(img, width: 150, height: 150),
             const SizedBox(height: 10),
             Text(
               "Nigerian Widows",
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic,
                 color: Theme.of(context).textTheme.bodyText1!.color,
               ),
             ),

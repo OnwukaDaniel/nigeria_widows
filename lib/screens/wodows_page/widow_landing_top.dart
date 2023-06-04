@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rnd/rnd.dart';
 
 import '../../controller/HomePageController.dart';
 import '../../models/WidowData.dart';
@@ -15,6 +18,14 @@ class WidowLandingTop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    List<String> images = [];
+    Random rand = Random(42);
+    for(int x = 1; x <=31; x++){
+      images.add("assets/widow_images/profile$x.png");
+    }
+
+
+
     return ListView(
       padding: const EdgeInsets.all(8),
       physics: const BouncingScrollPhysics(),
@@ -112,8 +123,8 @@ class WidowLandingTop extends ConsumerWidget {
                 itemBuilder: (BuildContext context, int index) {
                   double font = 9;
                   var data = dataList[index];
-
-                  var img = "assets/widow_images/profile1.png";
+                  int randomInteger = rand.getInt(1, 31);
+                  var img = images[randomInteger];
 
                   return GestureDetector(
                     onTap: (){
