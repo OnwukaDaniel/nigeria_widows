@@ -175,7 +175,7 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
     if (input == 0) {
       return [];
     } else if (input == 1) {
-      return ["1"];
+      return ["1" ];
     } else if (input == 2) {
       return ["1", "2"];
     } else if (input == 3) {
