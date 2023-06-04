@@ -103,8 +103,7 @@ class _SettingsState extends State<Settings> {
               text: "Widow's Page",
               onTap: () {},
             ),*/
-            const SizedBox(height: 16),
-            const SizedBox(height: 16),
+            const SizedBox(height: 32),
           ],
         ),
       ),
