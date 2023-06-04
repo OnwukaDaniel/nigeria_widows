@@ -97,12 +97,13 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                                 return GestureDetector(
                                   onTap: () {
                                     if (pageDatum == ">>") {
-                                      getPage(ref, selectedPage * 17);
+                                      var idx = selectedPage + 1;
+                                      getPage(ref, (idx - 2) * 18 + 17);
                                     } else if (pageDatum == "1") {
-                                      getPage(ref, -1);
+                                      getPage(ref, -1); // (p - 2) * 18 + 17
                                     } else if (pageDatum != "...") {
-                                      var idx = int.parse(pageData[index]) - 1;
-                                      getPage(ref, idx * 17);
+                                      var idx = int.parse(pageData[index]);
+                                      getPage(ref, (idx - 2) * 18 + 17);
                                     } else if (pageDatum == "...") {
                                       showDialog(
                                         context: context,
@@ -364,9 +365,9 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                                       });
                                       return;
                                     } else if (text.toString() == "1") {
-                                      getPage(ref, -1);
+                                      getPage(ref, (text - 2) * 18 + 17);
                                     } else {
-                                      getPage(ref, (text - 1) * 17);
+                                      getPage(ref, (text - 2) * 18 + 17);
                                     }
                                     Navigator.pop(context);
                                   },
