@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     for (int x = 1; x <= 5; x++) {
       images.add("assets/widow_images/profile$x.png");
     }
-    int randomInteger = rand.getInt(1, 31);
+    int randomInteger = rand.getInt(1, 5);
     var img = images[randomInteger];
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,

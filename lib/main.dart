@@ -1,22 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nigerian_widows/screens/home.dart';
 import 'package:nigerian_widows/screens/settings/homepage_background.dart';
 import 'package:nigerian_widows/screens/splash_screen.dart';
 import 'package:nigerian_widows/sharednotifiers/app.dart';
 import 'package:nigerian_widows/theme/apptheme.dart';
-import 'package:nigerian_widows/viewmodel/chart_view_model.dart';
-import 'package:nigerian_widows/viewmodel/users_view_model.dart';
-import 'package:nigerian_widows/viewmodel/widows_model.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/landing.dart';
 import 'screens/settings.dart';
-import 'screens/widows_data.dart';
-import 'package:riverpod/riverpod.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
