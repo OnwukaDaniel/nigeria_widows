@@ -156,7 +156,18 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
               ],
             );
           },
-          error: (error, _) => const SizedBox(),
+          error: (error, _) => Column(
+            children: [
+              const SizedBox(height: kToolbarHeight * 3),
+              Center(
+                child: Text("Error fetching data",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1?.color,
+                      fontSize: 18,
+                    )),
+              )
+            ],
+          ),
           loading: () {
             SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
               AppNotifier.toolbarTitleVn.value = "Loading ...";
