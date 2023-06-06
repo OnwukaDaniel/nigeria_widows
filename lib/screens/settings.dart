@@ -118,8 +118,8 @@ class _SettingsState extends State<Settings> {
 }
 
 class BackgroundChangeCard extends StatelessWidget {
-  final String text;
   final Function() onTap;
+  final String text;
 
   const BackgroundChangeCard({
     Key? key,
