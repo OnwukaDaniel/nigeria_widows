@@ -118,7 +118,7 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                                             ),
                                             child: connectedDotsDialog(
                                               context,
-                                              data.data.widowsCount.count ~/ 17,
+                                              data.data.widowsCount.count ~/ 18,
                                               ref,
                                             ),
                                           );
@@ -200,6 +200,13 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
         "${currentPage - 2}",
         "${currentPage - 1}",
         "$currentPage",
+      ];
+    } else if (input - 1 == count) {
+      return [
+        "...",
+        "${currentPage - 1}",
+        "$currentPage",
+        "${currentPage + 1}",
       ];
     } else {
       if (currentPage == 1) {
