@@ -98,12 +98,12 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                                   onTap: () {
                                     if (pageDatum == ">>") {
                                       var idx = selectedPage + 1;
-                                      getPage(ref, (idx - 2) * 18 + 17);
+                                      getPage(ref, (idx - 2) * 18 + 17, idx);
                                     } else if (pageDatum == "1") {
-                                      getPage(ref, -1); // (p - 2) * 18 + 17
+                                      getPage(ref, -1, 1); // (p - 2) * 18 + 17
                                     } else if (pageDatum != "...") {
                                       var idx = int.parse(pageData[index]);
-                                      getPage(ref, (idx - 2) * 18 + 17);
+                                      getPage(ref, (idx - 2) * 18 + 17, idx);
                                     } else if (pageDatum == "...") {
                                       showDialog(
                                         context: context,
@@ -178,8 +178,9 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
         );
   }
 
-  getPage(WidgetRef ref, int index) {
-    ref.watch(homePageControllerProvider).getWidowData(input: index);
+  getPage(WidgetRef ref, int index, int newPage) {
+    AppNotifier.selectedPageVn.value = newPage;
+        ref.watch(homePageControllerProvider).getWidowData(input: index);
   }
 
   List<String> pageToPagination(int input, {int currentPage = 1}) {
@@ -376,9 +377,9 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                                       });
                                       return;
                                     } else if (text.toString() == "1") {
-                                      getPage(ref, (text - 2) * 18 + 17);
+                                      getPage(ref, (text - 2) * 18 + 17, 1);
                                     } else {
-                                      getPage(ref, (text - 2) * 18 + 17);
+                                      getPage(ref, (text - 2) * 18 + 17, text);
                                     }
                                     Navigator.pop(context);
                                   },

@@ -26,12 +26,10 @@ class EntryRepository {
     if (response.code == AppConstants.SUCCESS) {
       _widowData = WidowData.fromJson(jsonDecode(response.response));
       AppNotifier.cacheWidowDataVn.value = _widowData;
-      int currentIndex = (_widowData.lastIndex!) ~/ 17;
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         AppNotifier.toolbarTitleVn.value = "Widows Data";
         AppNotifier.widowsPageShowShimmerVn.value = false;
       });
-      AppNotifier.selectedPageVn.value = currentIndex;
       return _widowData;
     } else {
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
