@@ -11,11 +11,6 @@ class WidowsLanding extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-  SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-    AppNotifier.toolbarTitleVn.value = "Widows Data";
-    AppNotifier.widowsPageShowShimmerVn.value = true;
-  });
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Stack(

@@ -34,8 +34,9 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
                           valueListenable: AppNotifier.selectedPageVn,
                           builder: (_, int selectedPage, __) {
                             var pageData = pageToPagination(
-                              data.data.widowsCount.count ~/ 18,
+                              data.data.widowsCount.count ~/ 17,
                               currentPage: selectedPage,
+                              selectedPage,
                             );
 
                             return ListView.builder(
@@ -180,10 +181,11 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
 
   getPage(WidgetRef ref, int index, int newPage) {
     AppNotifier.selectedPageVn.value = newPage;
-        ref.watch(homePageControllerProvider).getWidowData(input: index);
+    ref.watch(homePageControllerProvider).getWidowData(input: index);
   }
 
-  List<String> pageToPagination(int input, {int currentPage = 1}) {
+  List<String> pageToPagination(int input, int count, {int currentPage = 1}) {
+    print("Input ******************** $input ************* $count");
     if (input == 0) {
       return [];
     } else if (input == 1) {
@@ -192,6 +194,13 @@ class WidowLandingBottomNavigation extends ConsumerWidget {
       return ["1", "2"];
     } else if (input == 3) {
       return ["1", "2", "3"];
+    } else if (input == count) {
+      return [
+        "...",
+        "${currentPage - 2}",
+        "${currentPage - 1}",
+        "$currentPage",
+      ];
     } else {
       if (currentPage == 1) {
         return [
