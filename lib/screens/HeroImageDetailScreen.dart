@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HeroImageDetailScreen extends StatelessWidget {
-  final String image;
+   final String image;
 
   const HeroImageDetailScreen({
     Key? key,
