@@ -7,7 +7,9 @@ This project is a development challenge with `MobileDev.Com` community.
  
 - [Challenge dashboard design](https://www.figma.com/file/7zOGzPAZiqxTt6G90qzA0z/Graph-UI?node-id=24%3A1556&t=zoS4RJCrF64vRD4R-0)
  
-Video sample:
+# Video sample:
+![Output sample](https://github.com/OnwukaDaniel/nigeria_widows/blob/master/ezgif.com-gif-maker(1).gif) 
+
 #
 [![Download the video](https://i.imgur.com/vKb2F1B.png)](https://firebasestorage.googleapis.com/v0/b/onwuka-b0f88.appspot.com/o/screen-20230612-132038.mp4?alt=media&token=997c1390-cbc5-4ca0-ac98-f02375c5d0b9)
  
