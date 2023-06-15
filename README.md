@@ -4,6 +4,8 @@ Mobile dev dashboard project challenge.
 
 
 This project is a development challenge with `MobileDev.Com` community.
+
+[Download the app](https://firebasestorage.googleapis.com/v0/b/onwuka-b0f88.appspot.com/o/app-release.apk?alt=media&token=169d3451-c35e-4a7a-810b-6668906b507f)
  
 - [Challenge dashboard design](https://www.figma.com/file/7zOGzPAZiqxTt6G90qzA0z/Graph-UI?node-id=24%3A1556&t=zoS4RJCrF64vRD4R-0)
  
